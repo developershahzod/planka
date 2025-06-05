@@ -42,10 +42,10 @@ COPY --from=server-dependencies --chown=node:node /app/node_modules node_modules
 COPY --from=client --chown=node:node /app/dist public
 COPY --from=client --chown=node:node /app/dist/index.html views
 
-VOLUME /app/public/favicons
-VOLUME /app/public/user-avatars
-VOLUME /app/public/background-images
-VOLUME /app/private/attachments
+# VOLUME /app/public/favicons
+# VOLUME /app/public/user-avatars
+# VOLUME /app/public/background-images
+# VOLUME /app/private/attachments
 
 EXPOSE 1337
 
