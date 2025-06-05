@@ -2,11 +2,11 @@ services:
   planka:
     image: ghcr.io/plankanban/planka:2.0.0-rc.3
     restart: on-failure
-    # volumes:
-    #   - favicons:/app/public/favicons
-    #   - user-avatars:/app/public/user-avatars
-    #   - background-images:/app/public/background-images
-    #   - attachments:/app/private/attachments
+    volumes:
+      - favicons:/app/public/favicons
+      - user-avatars:/app/public/user-avatars
+      - background-images:/app/public/background-images
+      - attachments:/app/private/attachments
     # Optionally override this to your user/group
     # user: 1000:1000
     # tmpfs:
