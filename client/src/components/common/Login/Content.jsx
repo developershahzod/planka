@@ -170,7 +170,7 @@ const Content = React.memo(() => {
       <Grid verticalAlign="middle" className={classNames(styles.grid, styles.fullHeight)}>
         <Grid.Column computer={6} tablet={16} mobile={16}>
           <div className={styles.loginWrapper}>
-            <Header as="h1" textAlign="center" content="PLANKA" className={styles.formTitle} />
+            <Header as="h1" textAlign="center" content="Podium Todo Admin" className={styles.formTitle} />
             <Header
               as="h2"
               textAlign="center"
@@ -247,14 +247,6 @@ const Content = React.memo(() => {
                 />
               )}
             </div>
-            <p className={styles.formFooter}>
-              <Trans i18nKey="common.poweredByPlanka">
-                {'Powered by '}
-                <a href="https://github.com/plankanban/planka" target="_blank" rel="noreferrer">
-                  PLANKA
-                </a>
-              </Trans>
-            </p>
           </div>
         </Grid.Column>
         <Grid.Column
