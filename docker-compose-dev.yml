@@ -10,10 +10,10 @@ services:
     volumes:
       - ./server:/app
     ports:
-      - 1337:1337
+      - 8080:8080
     environment:
-      - BASE_URL=http://localhost:1337
-      - DATABASE_URL=postgresql://postgres@postgres/planka
+      - BASE_URL=https://planka-production-f920.up.railway.app:8080
+      - DATABASE_URL=postgresql://postgres:yUJQlINNspHPaqOjRQTMSmuuefOAzVmV@postgres.railway.internal:5432/railway
       - SECRET_KEY=notsecretkey
 
       # - LOG_LEVEL=warn
