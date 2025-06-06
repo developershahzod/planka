@@ -10,10 +10,9 @@
 }
 
 .card {
-  background: #fff;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  border-radius: 4px;
+  color: white;
+  background: #1b1c20;
 }
 
 .sectionTitle {
@@ -31,7 +30,6 @@
 
 .progressBarBackground {
   height: 12px;
-  background: #eee;
   border-radius: 6px;
   overflow: hidden;
   margin-top: 4px;
