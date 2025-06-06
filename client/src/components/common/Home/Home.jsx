@@ -31,10 +31,58 @@ const Home = React.memo(() => {
 
   return (
     <div className={styles.wrapper}>
-      <div>
-        <h1>Statistika</h1>
-        <div><p>2 Vipolnenih zadaniy</p></div>
-      </div>
+      <div
+  style={{
+    display: "flex",
+    gap: 20,
+    flexWrap: "wrap",
+    justifyContent: "center"
+  }}
+>
+  <div
+    style={{
+      backgroundColor: "#3B82F6",
+      color: "white",
+      padding: 30,
+      borderRadius: 16,
+      width: 250,
+      textAlign: "center",
+      boxShadow: "0 4px 12px rgba(0,0,0,0.1)"
+    }}
+  >
+    <h2 style={{ margin: "0 0 10px", fontSize: 20 }}>Общее количество</h2>
+    <p style={{ fontSize: 36, margin: 0, fontWeight: "bold" }}>12</p>
+  </div>
+  <div
+    style={{
+      backgroundColor: "#10B981",
+      color: "white",
+      padding: 30,
+      borderRadius: 16,
+      width: 250,
+      textAlign: "center",
+      boxShadow: "0 4px 12px rgba(0,0,0,0.1)"
+    }}
+  >
+    <h2 style={{ margin: "0 0 10px", fontSize: 20 }}>Выполнено</h2>
+    <p style={{ fontSize: 36, margin: 0, fontWeight: "bold" }}>7</p>
+  </div>
+  <div
+    style={{
+      backgroundColor: "#EF4444",
+      color: "white",
+      padding: 30,
+      borderRadius: 16,
+      width: 250,
+      textAlign: "center",
+      boxShadow: "0 4px 12px rgba(0,0,0,0.1)"
+    }}
+  >
+    <h2 style={{ margin: "0 0 10px", fontSize: 20 }}>Невыполнено</h2>
+    <p style={{ fontSize: 36, margin: 0, fontWeight: "bold" }}>5</p>
+  </div>
+</div>
+
       <View />
     </div>
   );
