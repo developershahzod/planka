@@ -1,12 +1,10 @@
 import React from 'react';
 import styles from './DashboardStats.module.scss';
 
+import selectors from '../../../selectors';
+
 const DashboardStats = () => {
-  const taskStats = [
-    { name: 'Завершено', value: 30, color: '#4caf50' },
-    { name: 'В процессе', value: 15, color: '#fbc02d' },
-    { name: 'Просрочено', value: 5, color: '#f44336' },
-  ];
+  const taskStats = = useSelector(selectors.selectTasks);
 
   const activityData = [
     { day: 'Пн', tasks: 5 },
