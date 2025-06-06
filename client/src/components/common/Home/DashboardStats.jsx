@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './DashboardStats.module.scss';
 
-import selectors from '../../../selectors';
+
 
 const DashboardStats = () => {
   const taskStats = = [],
