@@ -1,8 +1,11 @@
-export default function DashboardStats() {
+import React from 'react';
+import styles from './DashboardStats.module.scss';
+
+const DashboardStats = () => {
   const taskStats = [
-    { name: 'Завершено', value: 30, color: 'bg-green-400' },
-    { name: 'В процессе', value: 15, color: 'bg-yellow-400' },
-    { name: 'Просрочено', value: 5, color: 'bg-red-400' },
+    { name: 'Завершено', value: 30, color: '#4caf50' },
+    { name: 'В процессе', value: 15, color: '#fbc02d' },
+    { name: 'Просрочено', value: 5, color: '#f44336' },
   ];
 
   const activityData = [
@@ -17,56 +20,53 @@ export default function DashboardStats() {
   const progressPercent = Math.round((taskStats[0].value / totalTasks) * 100);
 
   return (
-    <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className={styles.wrapper}>
       
       {/* Статистика задач */}
-      <div className="bg-white shadow rounded-2xl p-6">
-        <h2 className="text-xl font-bold mb-4">Статистика задач</h2>
-        <div className="space-y-2">
-          {taskStats.map((item) => (
-            <div key={item.name} className="flex justify-between items-center">
-              <div className="flex items-center gap-2">
-                <div className={`w-3 h-3 rounded-full ${item.color}`} />
-                <span>{item.name}</span>
-              </div>
-              <span className="font-semibold">{item.value}</span>
+      <div className={styles.card}>
+        <h2 className={styles.sectionTitle}>Статистика задач</h2>
+        {taskStats.map((item) => (
+          <div key={item.name} className={styles.statRow}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div style={{ width: 10, height: 10, backgroundColor: item.color, borderRadius: '50%' }} />
+              <span>{item.name}</span>
             </div>
-          ))}
-        </div>
-        <div className="mt-4">
-          <p className="mb-1 text-sm text-gray-500">Прогресс завершения</p>
-          <div className="w-full h-4 bg-gray-200 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-green-400 transition-all duration-500"
-              style={{ width: `${progressPercent}%` }}
-            ></div>
+            <strong>{item.value}</strong>
           </div>
-          <p className="mt-1 text-sm text-right font-medium text-green-600">
+        ))}
+        <div style={{ marginTop: 12 }}>
+          <div className={styles.progressBarBackground}>
+            <div
+              className={styles.progressBarValue}
+              style={{ width: `${progressPercent}%` }}
+            />
+          </div>
+          <div style={{ textAlign: 'right', marginTop: 4, color: '#4caf50', fontWeight: 500 }}>
             {progressPercent}%
-          </p>
+          </div>
         </div>
       </div>
 
       {/* Активность по дням */}
-      <div className="bg-white shadow rounded-2xl p-6">
-        <h2 className="text-xl font-bold mb-4">Активность по дням</h2>
-        <div className="space-y-2">
-          {activityData.map((item) => (
-            <div key={item.day}>
-              <div className="flex justify-between text-sm mb-1">
-                <span>{item.day}</span>
-                <span>{item.tasks} задач</span>
-              </div>
-              <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-blue-500"
-                  style={{ width: `${item.tasks * 10}%` }}
-                ></div>
-              </div>
+      <div className={styles.card}>
+        <h2 className={styles.sectionTitle}>Активность по дням</h2>
+        {activityData.map((item) => (
+          <div key={item.day} style={{ marginBottom: 10 }}>
+            <div className={styles.statRow}>
+              <span>{item.day}</span>
+              <span>{item.tasks} задач</span>
             </div>
-          ))}
-        </div>
+            <div className={styles.progressBarBackground}>
+              <div
+                className={styles.activityBar}
+                style={{ width: `${item.tasks * 10}%` }}
+              />
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
-}
+};
+
+export default DashboardStats;
