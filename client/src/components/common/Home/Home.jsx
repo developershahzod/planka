@@ -31,6 +31,10 @@ const Home = React.memo(() => {
 
   return (
     <div className={styles.wrapper}>
+      <div>
+        <h1>Statistika</h1>
+        <div><p>2 Vipolnenih zadaniy</p></div>
+      </div>
       <View />
     </div>
   );
