@@ -48,3 +48,43 @@
   border-radius: 4px;
   margin-top: 4px;
 }
+
+
+.tableContainer {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+  font-size: 14px;
+}
+
+.table th,
+.table td {
+  border-bottom: 1px solid #eee;
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.table th {
+  background-color: #f5f5f5;
+  font-weight: 600;
+}
+
+.statusCompleted {
+  color: #4caf50;
+  font-weight: 500;
+}
+
+.statusInProgress {
+  color: #ff9800;
+  font-weight: 500;
+}
+
+.statusOverdue {
+  color: #f44336;
+  font-weight: 500;
+}
+
