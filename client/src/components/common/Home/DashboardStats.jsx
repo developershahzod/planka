@@ -4,7 +4,7 @@ import styles from './DashboardStats.module.scss';
 
 
 const DashboardStats = () => {
-  const taskStats = = [],
+  const taskStats = [],
 
   const activityData = [
     { day: 'Пн', tasks: 5 },
