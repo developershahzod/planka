@@ -28,7 +28,15 @@ export const makeSelectTaskById = () =>
 
 export const selectTaskById = makeSelectTaskById();
 
+
+export const selectTasks = createSelector(orm, (session) => {
+  return session.Task.all().toModelArray().map((taskModel) => ({
+    ...taskModel.ref,
+  }));
+});
+
 export default {
   makeSelectTaskById,
   selectTaskById,
+  selectTasks
 };
