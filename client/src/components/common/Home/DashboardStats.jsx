@@ -4,7 +4,7 @@ import styles from './DashboardStats.module.scss';
 import selectors from '../../../selectors';
 
 const DashboardStats = () => {
-  const taskStats = = useSelector(selectors.selectTasks);
+  const taskStats = = [],
 
   const activityData = [
     { day: 'Пн', tasks: 5 },
