@@ -6,13 +6,12 @@
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 
-import selectors from '../../../selectors'; // Убедись, что путь правильный
+import selectors from '../../../selectors';
 import styles from './DashboardStats.module.scss';
 
 const DashboardStats = () => {
   const tasks = useSelector(selectors.selectTasks);
 
-  // Группировка задач по статусам
   const taskStats = useMemo(() => {
     let completed = 0;
     let inProgress = 0;
@@ -42,7 +41,6 @@ const DashboardStats = () => {
     ? Math.round((taskStats[0].value / totalTasks) * 100)
     : 0;
 
-  // Активность по дням недели
   const activityData = useMemo(() => {
     const days = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
     const map = new Array(7).fill(0);
@@ -58,6 +56,13 @@ const DashboardStats = () => {
       tasks: count,
     }));
   }, [tasks]);
+
+  const formatDate = (dateStr) =>
+    new Date(dateStr).toLocaleDateString('ru-RU', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    });
 
   return (
     <div className={styles.wrapper}>
@@ -120,6 +125,42 @@ const DashboardStats = () => {
             </div>
           </div>
         ))}
+      </div>
+
+      {/* Таблица задач */}
+      <div className={styles.card}>
+        <h2 className={styles.sectionTitle}>Список задач</h2>
+        <div className={styles.tableContainer}>
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th>№</th>
+                <th>Название</th>
+                <th>Статус</th>
+                <th>Дата</th>
+              </tr>
+            </thead>
+            <tbody>
+              {tasks.slice(0, 10).map((task, index) => (
+                <tr key={task.id}>
+                  <td>{index + 1}</td>
+                  <td>{task.name}</td>
+                  <td>
+                    {task.isCompleted ? (
+                      <span className={styles.statusCompleted}>Завершено</span>
+                    ) : task.dueDate &&
+                      new Date(task.dueDate).getTime() < Date.now() ? (
+                      <span className={styles.statusOverdue}>Просрочено</span>
+                    ) : (
+                      <span className={styles.statusInProgress}>В процессе</span>
+                    )}
+                  </td>
+                  <td>{formatDate(task.createdAt)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
