@@ -1,10 +1,12 @@
 import React from 'react';
 import styles from './DashboardStats.module.scss';
 
-
-
 const DashboardStats = () => {
-  const taskStats = [],
+  const taskStats = [
+    { name: 'Завершено', value: 12, color: '#4caf50' },
+    { name: 'В процессе', value: 7, color: '#ff9800' },
+    { name: 'Просрочено', value: 3, color: '#f44336' },
+  ];
 
   const activityData = [
     { day: 'Пн', tasks: 5 },
@@ -15,23 +17,32 @@ const DashboardStats = () => {
   ];
 
   const totalTasks = taskStats.reduce((sum, t) => sum + t.value, 0);
-  const progressPercent = Math.round((taskStats[0].value / totalTasks) * 100);
+  const progressPercent = totalTasks
+    ? Math.round((taskStats[0].value / totalTasks) * 100)
+    : 0;
 
   return (
     <div className={styles.wrapper}>
-      
       {/* Статистика задач */}
       <div className={styles.card}>
         <h2 className={styles.sectionTitle}>Статистика задач</h2>
         {taskStats.map((item) => (
           <div key={item.name} className={styles.statRow}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <div style={{ width: 10, height: 10, backgroundColor: item.color, borderRadius: '50%' }} />
+              <div
+                style={{
+                  width: 10,
+                  height: 10,
+                  backgroundColor: item.color,
+                  borderRadius: '50%',
+                }}
+              />
               <span>{item.name}</span>
             </div>
             <strong>{item.value}</strong>
           </div>
         ))}
+
         <div style={{ marginTop: 12 }}>
           <div className={styles.progressBarBackground}>
             <div
@@ -39,7 +50,14 @@ const DashboardStats = () => {
               style={{ width: `${progressPercent}%` }}
             />
           </div>
-          <div style={{ textAlign: 'right', marginTop: 4, color: '#4caf50', fontWeight: 500 }}>
+          <div
+            style={{
+              textAlign: 'right',
+              marginTop: 4,
+              color: '#4caf50',
+              fontWeight: 500,
+            }}
+          >
             {progressPercent}%
           </div>
         </div>
@@ -57,7 +75,7 @@ const DashboardStats = () => {
             <div className={styles.progressBarBackground}>
               <div
                 className={styles.activityBar}
-                style={{ width: `${item.tasks * 10}%` }}
+                style={{ width: `${item.tasks * 10}%`, backgroundColor: '#2196f3' }}
               />
             </div>
           </div>
