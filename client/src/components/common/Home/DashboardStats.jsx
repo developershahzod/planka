@@ -2,8 +2,7 @@ import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import selectors from '../../../selectors';
-import { fetchTasks } from '../../../actions/taskActions';
-import { selectBoard } from '../../../actions/boardActions';
+import { fetchTasks, selectBoard } from '../../../actions';
 
 import styles from './DashboardStats.module.scss';
 
