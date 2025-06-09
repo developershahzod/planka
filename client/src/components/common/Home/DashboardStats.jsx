@@ -195,7 +195,7 @@ const DashboardStats = () => {
       </div>
      <div className={`${styles.card} ${styles.tableBlock}`} style={{ width: '100%', gridColumn: 'span 3' }}>
 
-        <h2 className={styles.sectionTitle}>Все задачи,  количество:{tasksall.length}</h2>
+        <h2 className={styles.sectionTitle}>Все задачи,  количество: {tasksall.length}</h2>
         <div className={styles.tableContainer}>
           <table className={styles.table}>
             <thead>
