@@ -147,7 +147,7 @@ const Header = React.memo(() => {
 
 
 
-            <Menu.Item
+{/*             <Menu.Item
               as={Link}
               to={"/docs/"}
               className={classNames(styles.item, styles.itemHoverable)}
@@ -160,7 +160,7 @@ const Header = React.memo(() => {
                
               />
          
-            </Menu.Item>
+            </Menu.Item> */}
           <NotificationsPopup>
             <Menu.Item className={classNames(styles.item, styles.itemHoverable)}>
               <Icon fitted name="bell" />
