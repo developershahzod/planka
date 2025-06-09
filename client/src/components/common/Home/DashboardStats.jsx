@@ -84,7 +84,6 @@ const DashboardStats = () => {
 
   return (
     <div className={styles.wrapper}>
-      {/* Статистика задач */}
       <div className={styles.card}>
         <h2 className={styles.sectionTitle}>Статистика задач</h2>
         {taskStats.map((item) => (
@@ -123,7 +122,6 @@ const DashboardStats = () => {
         </div>
       </div>
 
-      {/* Активность по дням */}
       <div className={styles.card}>
         <h2 className={styles.sectionTitle}>Активность по дням</h2>
         {activityData.map((item) => (
@@ -145,7 +143,6 @@ const DashboardStats = () => {
         ))}
       </div>
 
-      {/* Таблица задач */}
       <div className={styles.card}>
         <h2 className={styles.sectionTitle}>Список задач</h2>
         <div className={styles.tableContainer}>
@@ -166,8 +163,7 @@ const DashboardStats = () => {
                   <td>
                     {task.isCompleted ? (
                       <span className={styles.statusCompleted}>Завершено</span>
-                    ) : task.dueDate &&
-                      new Date(task.dueDate).getTime() < Date.now() ? (
+                    ) : task.dueDate && new Date(task.dueDate).getTime() < Date.now() ? (
                       <span className={styles.statusOverdue}>Просрочено</span>
                     ) : (
                       <span className={styles.statusInProgress}>В процессе</span>
