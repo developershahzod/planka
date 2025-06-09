@@ -10,25 +10,14 @@ const DashboardStats = () => {
   const dispatch = useDispatch();
   const boards = useSelector(selectors.selectBoards);
   const boardId = useSelector(selectors.selectCurrentBoardId);
-  const board = useSelector((state) =>
-    boardId ? selectors.selectBoardById(state, boardId) : null
-  );
   const tasks = useSelector(selectors.selectTasks);
 
-  // Выбираем первую доску и загружаем её, если ещё не выбрана
+  // Выбрать первую доску, если ещё не выбрана
   useEffect(() => {
     if (!boardId && boards.length > 0) {
-      dispatch({ type: 'BOARD_CONTEXT_UPDATE', payload: { id: boards[0].id, value: true } });
       dispatch(actions.fetchBoard(boards[0].id));
     }
   }, [boardId, boards, dispatch]);
-
-  // Не загружаем доску повторно, если она уже есть
-  useEffect(() => {
-    if (boardId && !board) {
-      dispatch(actions.fetchBoard(boardId));
-    }
-  }, [boardId, board, dispatch]);
 
   const taskStats = useMemo(() => {
     let completed = 0;
@@ -81,10 +70,6 @@ const DashboardStats = () => {
       month: 'short',
       year: 'numeric',
     });
-
-  if (!tasks.length) {
-    return <div className={styles.wrapper}>Загрузка данных...</div>;
-  }
 
   return (
     <div className={styles.wrapper}>
