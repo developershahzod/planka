@@ -21,6 +21,10 @@ const DashboardStats = () => {
         Authorization: `Bearer ${token}`,
       });
 
+        console.log('🔍 userId:', user.id);
+
+          console.log('🧍 Пользователь:', JSON.stringify(user, null, 2));
+
       const response = await axios.get(`${BASE_URL}/api/tasks/show`, {
         params: { userId: user.id },
         headers: {
