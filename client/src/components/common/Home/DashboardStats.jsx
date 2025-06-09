@@ -15,6 +15,7 @@ const DashboardStats = () => {
     const fetchTasks = async () => {
       try {
         const token = getAccessToken();
+        console.log('🔥 TOKEN:', token);
         const user = await userApi.getCurrentUser(false, {
           headers: {
             Authorization: `Bearer ${token}`,
