@@ -12,7 +12,7 @@ const DashboardStats = () => {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const userId = "1,526,086,036,881,409,025";
+        const userId = "1526086036881409025";
 
 
         const response = await axios.get(`${BASE_URL}/api/tasks/show`, {
