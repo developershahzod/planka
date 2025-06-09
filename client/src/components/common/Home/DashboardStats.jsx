@@ -33,7 +33,7 @@ const DashboardStats = () => {
 
         setTasks(response.data);
       } catch (error) {
-        console.error('Ошибка при загрузке задач:', error);
+        console.log('Ошибка при загрузке задач:', error);
       } finally {
         setLoading(false);
       }
