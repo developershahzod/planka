@@ -144,6 +144,17 @@ const Header = React.memo(() => {
               />
             </Menu.Item>
           )}
+
+            <Menu.Item
+              className={classNames(styles.item, styles.itemHoverable)}
+              onClick={handleToggleEditModeClick}
+            >
+              <Icon
+                fitted
+                name={isEditModeEnabled ? 'doc' : 'doc'}
+                className={classNames(styles.itemIconEnabled)}
+              />
+            </Menu.Item>
           <NotificationsPopup>
             <Menu.Item className={classNames(styles.item, styles.itemHoverable)}>
               <Icon fitted name="bell" />
