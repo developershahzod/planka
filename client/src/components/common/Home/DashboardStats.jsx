@@ -12,47 +12,40 @@ const DashboardStats = () => {
   const [loading, setLoading] = useState(true);
 
   const BASE_URL = 'https://planka-production-f920.up.railway.app';
-  const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjkxN2QwYjYyLWVkMTgtNDk0Ni04NWY3LWNkNTBmZjhiMTAzMSJ9.eyJpYXQiOjE3NDkyMTg1OTAsImV4cCI6MTc4MDc1NDU5MCwic3ViIjoiMTUyNjA4NjAzNjg4MTQwOTAyNSJ9.igEi53ojUkV95-45axj70lEtatyO-rxnBfysmBXFwxc";
 
   useEffect(() => {
-  const fetchTasks = async () => {
-    try {
-      const token = getAccessToken();
-      const user = await userApi.getCurrentUser(false, {
-        Authorization: `Bearer ${token}`,
-      });
-
-        console.log('🔍 userId:', user.item.id);
-
-          console.log('🧍 Пользователь:', JSON.stringify(user.item.id, null, 2));
-
-      const response = await axios.get(`${BASE_URL}/api/tasks/show`, {
-        params: { userId: user.item.id },
-        headers: {
+    const fetchTasks = async () => {
+      try {
+        const token = getAccessToken();
+        const user = await userApi.getCurrentUser(false, {
           Authorization: `Bearer ${token}`,
-        },
-      });
+        });
 
+        const response = await axios.get(`${BASE_URL}/api/tasks/show`, {
+          params: { userId: user.item.id },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-      const response2 = await axios.get(`${BASE_URL}/api/tasks/show`, {
-        params: { userId: '' },
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+        const response2 = await axios.get(`${BASE_URL}/api/tasks/show`, {
+          params: { userId: '' },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-      setTasks(response.data);
-      setTasksall(response2.data);
-    } catch (error) {
-      console.error('Ошибка при загрузке задач:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+        setTasks(response.data);
+        setTasksall(response2.data);
+      } catch (error) {
+        console.error('Ошибка при загрузке задач:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  fetchTasks();
-}, []);
-
+    fetchTasks();
+  }, []);
 
   const taskStats = useMemo(() => {
     let completed = 0;
@@ -105,7 +98,6 @@ const DashboardStats = () => {
 
   return (
     <div className={styles.gridWrapper}>
-      {/* 3 статистики */}
       {taskStats.map((item) => (
         <div key={item.name} className={styles.card}>
           <h2 className={styles.sectionTitle}>{item.name}</h2>
@@ -126,7 +118,6 @@ const DashboardStats = () => {
         </div>
       ))}
 
-      {/* Активность по дням */}
       <div className={`${styles.card} ${styles.activityBlock}`}>
         <h2 className={styles.sectionTitle}>Активность по дням</h2>
         {activityData.map((item) => (
@@ -148,24 +139,27 @@ const DashboardStats = () => {
         ))}
       </div>
 
-      {/* Таблица */}
-      <div className={`${styles.card} ${styles.tableBlock}`}>
-        <h2 className={styles.sectionTitle}>Список задач</h2>
+      <div className={`${styles.card} ${styles.tableBlock}`} style={{ width: '100%', gridColumn: 'span 3' }}>
+        <h2 className={styles.sectionTitle}>Список всех задач</h2>
         <div className={styles.tableContainer}>
           <table className={styles.table}>
             <thead>
               <tr>
                 <th>№</th>
                 <th>Название</th>
+                <th>Проект</th>
+                <th>Доска</th>
                 <th>Статус</th>
                 <th>Дата</th>
               </tr>
             </thead>
             <tbody>
-              {tasks.slice(0, 10).map((task, index) => (
+              {tasksall.map((task, index) => (
                 <tr key={task.id}>
                   <td>{index + 1}</td>
                   <td>{task.name}</td>
+                  <td>{task.projectName || '—'}</td>
+                  <td>{task.boardName || '—'}</td>
                   <td>
                     {task.isCompleted ? (
                       <span className={styles.statusCompleted}>Завершено</span>
@@ -181,39 +175,6 @@ const DashboardStats = () => {
             </tbody>
           </table>
         </div>
-      </div>
-
-    <div className={`${styles.card} ${styles.tableBlock}`}>
-      <h2 className={styles.sectionTitle}>Список задач</h2>
-      <div className={styles.tableContainer}>
-        <table className={styles.table}>
-          <thead>
-            <tr>
-              <th>№</th>
-              <th>Название</th>
-              <th>Статус</th>
-              <th>Дата</th>
-            </tr>
-          </thead>
-          <tbody>
-            {tasksall.map((task, index) => (
-              <tr key={task.id}>
-                <td>{index + 1}</td>
-                <td>{task.name}</td>
-                <td>
-                  {task.isCompleted ? (
-                    <span className={styles.statusCompleted}>Завершено</span>
-                  ) : task.dueDate && new Date(task.dueDate).getTime() < Date.now() ? (
-                    <span className={styles.statusOverdue}>Просрочено</span>
-                  ) : (
-                    <span className={styles.statusInProgress}>В процессе</span>
-                  )}
-                </td>
-                <td>{formatDate(task.createdAt)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
       </div>
     </div>
   );
