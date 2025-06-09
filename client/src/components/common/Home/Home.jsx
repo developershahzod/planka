@@ -35,7 +35,7 @@ const Home = React.memo(() => {
 
   return (
     <div className={styles.wrapper}>
-      <DashboardStats />
+{/*        <DashboardStats /> */}
 
 
       <View />
