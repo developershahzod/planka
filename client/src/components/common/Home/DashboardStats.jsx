@@ -2,7 +2,7 @@ import React, { useMemo, useEffect, useState } from 'react';
 import axios from 'axios';
 import styles from './DashboardStats.module.scss';
 
-import { getCurrentUser } from '@/api/users';
+import { getCurrentUser } from '../../../api/users';
 
 const DashboardStats = () => {
   const [tasks, setTasks] = useState([]);
