@@ -16,11 +16,7 @@ const DashboardStats = () => {
       try {
         const token = getAccessToken();
         console.log('🔥 TOKEN:', token);
-        const user = await userApi.getCurrentUser(false, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const user = await userApi.getCurrentUser(false, {Authorization: `Bearer ${token}`});
 
         console.log('🔍 userId:', user.item.id);
         console.log('🧍 Пользователь:', JSON.stringify(user.item.id, null, 2));
