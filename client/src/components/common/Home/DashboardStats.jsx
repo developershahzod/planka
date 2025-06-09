@@ -2,41 +2,30 @@ import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import selectors from '../../../selectors';
-import { fetchTasks, fetchBoard } from '../../../actions';
+import actions from '../../../actions';
 
 import styles from './DashboardStats.module.scss';
 
 const DashboardStats = () => {
   const dispatch = useDispatch();
-
   const boards = useSelector(selectors.selectBoards);
   const boardId = useSelector(selectors.selectCurrentBoardId);
   const tasks = useSelector(selectors.selectTasks);
 
-  // Выбираем первую доску, если ещё не выбрана
+  // Выбрать первую доску, если ещё не выбрана
   useEffect(() => {
     if (!boardId && boards.length > 0) {
-      dispatch(selectBoard(boards[0].id));
+      dispatch(actions.fetchBoard(boards[0].id));
     }
   }, [boardId, boards, dispatch]);
 
-  // Загружаем задачи при наличии boardId
+  // Повторно загружать доску, если выбран boardId
   useEffect(() => {
     if (boardId) {
-      dispatch(fetchTasks(boardId));
+      dispatch(actions.fetchBoard(boardId));
     }
   }, [boardId, dispatch]);
 
-  // Пока задач нет — показываем "Загрузка..."
-  if (!tasks || tasks.length === 0) {
-    return (
-      <div className={styles.wrapper}>
-        <div className={styles.card}>⏳ Загружаем задачи... Подожди чутка 😉</div>
-      </div>
-    );
-  }
-
-  // Считаем статистику
   const taskStats = useMemo(() => {
     let completed = 0;
     let inProgress = 0;
