@@ -12,17 +12,14 @@ const DashboardStats = () => {
     const fetchTasks = async () => {
       try {
         // Авторизация в Metabase
-        const authRes = await axios.post(`${BASE_URL}/api/session`, {
-          username: 'developershahzod@gmail.com', // <-- замени на свой логин
-          password: 'Shaha2001.Shaha2001',  // <-- и свой пароль
-        });
+     
 
-        const sessionToken = authRes.data.id;
+        const sessionToken = "81ad840a-100f-4849-8b5c-57605289f9fb";
 
         // Запрос задач с токеном
         const taskRes = await axios.get(`${BASE_URL}/api/task/`, {
           headers: {
-            'X-Metabase-Session': sessionToken,
+            'X-Metabase-Session': "81ad840a-100f-4849-8b5c-57605289f9fb",
           },
         });
 
