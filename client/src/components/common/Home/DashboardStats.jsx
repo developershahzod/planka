@@ -8,7 +8,6 @@ import userApi from '../../../api/users';
 
 const DashboardStats = () => {
   const [tasks, setTasks] = useState([]);
-  const [tasksall, setTasksall] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const BASE_URL = 'https://planka-production-f920.up.railway.app';
@@ -19,7 +18,7 @@ const DashboardStats = () => {
     try {
       const token = getAccessToken();
       const user = await userApi.getCurrentUser(false, {
-        Authorization: `Bearer ${token}`,
+        Authorization: Bearer ${token},
       });
 
         console.log('🔍 userId:', user.item.id);
@@ -29,20 +28,11 @@ const DashboardStats = () => {
       const response = await axios.get(`${BASE_URL}/api/tasks/show`, {
         params: { userId: user.item.id },
         headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-
-      const response2 = await axios.get(`${BASE_URL}/api/tasks/show`, {
-        params: { userId: '' },
-        headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: Bearer ${token},
         },
       });
 
       setTasks(response.data);
-      setTasksall(response2.data);
     } catch (error) {
       console.error('Ошибка при загрузке задач:', error);
     } finally {
@@ -104,10 +94,8 @@ const DashboardStats = () => {
   if (loading) return <div>Загрузка задач...</div>;
 
   return (
-
-  <div className={styles.gridWrapper}>
-    {/* 3 статистики */}
-    <div className={styles.row}>
+    <div className={styles.gridWrapper}>
+      {/* 3 статистики */}
       {taskStats.map((item) => (
         <div key={item.name} className={styles.card}>
           <h2 className={styles.sectionTitle}>{item.name}</h2>
@@ -127,112 +115,64 @@ const DashboardStats = () => {
           </div>
         </div>
       ))}
-    </div>
 
-    {/* Активность по дням */}
-    <div className={`${styles.card} ${styles.activityBlock}`}>
-      <h2 className={styles.sectionTitle}>Активность по дням</h2>
-      {activityData.map((item) => (
-        <div key={item.day} style={{ marginBottom: 10 }}>
-          <div className={styles.statRow}>
-            <span>{item.day}</span>
-            <span>{item.tasks} задач</span>
+{/* Активность по дням */}
+      <div className={`${styles.card} ${styles.activityBlock}`}>
+        <h2 className={styles.sectionTitle}>Активность по дням</h2>
+        {activityData.map((item) => (
+          <div key={item.day} style={{ marginBottom: 10 }}>
+            <div className={styles.statRow}>
+              <span>{item.day}</span>
+              <span>{item.tasks} задач</span>
+            </div>
+            <div className={styles.progressBarBackground}>
+              <div
+                className={styles.activityBar}
+                style={{
+                  width: ${item.tasks * 10}%,
+                  backgroundColor: '#2196f3',
+                }}
+              />
+            </div>
           </div>
-          <div className={styles.progressBarBackground}>
-            <div
-              className={styles.activityBar}
-              style={{
-                width: `${item.tasks * 10}%`,
-                backgroundColor: '#2196f3',
-              }}
-            />
-          </div>
+        ))}
+      </div>
+
+      {/* Таблица */}
+      <div className={`${styles.card} ${styles.tableBlock}`}>
+        <h2 className={styles.sectionTitle}>Список задач</h2>
+        <div className={styles.tableContainer}>
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th>№</th>
+                <th>Название</th>
+                <th>Статус</th>
+                <th>Дата</th>
+              </tr>
+            </thead>
+            <tbody>
+              {tasks.slice(0, 10).map((task, index) => (
+                <tr key={task.id}>
+                  <td>{index + 1}</td>
+                  <td>{task.name}</td>
+                  <td>
+                    {task.isCompleted ? (
+                      <span className={styles.statusCompleted}>Завершено</span>
+                    ) : task.dueDate && new Date(task.dueDate).getTime() < Date.now() ? (
+                      <span className={styles.statusOverdue}>Просрочено</span>
+                    ) : (
+                      <span className={styles.statusInProgress}>В процессе</span>
+                    )}
+                  </td>
+                  <td>{formatDate(task.createdAt)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-      ))}
-    </div>
-
-    {/* Персональные задачи */}
-    <div className={`${styles.card} ${styles.tableBlock}`}>
-      <h2 className={styles.sectionTitle}>Мои задачи</h2>
-      <div className={styles.tableContainer}>
-        <table className={styles.table}>
-          <thead>
-            <tr>
-              <th>№</th>
-              <th>Название задачи</th>
-              <th>Статус</th>
-              <th>Дата</th>
-            </tr>
-          </thead>
-          <tbody>
-            {tasks.slice(0, 10).map((task, index) => (
-              <tr key={task.id}>
-                <td>{index + 1}</td>
-                <td>{task.name}</td>
-                <td>
-                  {task.isCompleted ? (
-                    <span className={styles.statusCompleted}>Завершено</span>
-                  ) : task.dueDate && new Date(task.dueDate).getTime() < Date.now() ? (
-                    <span className={styles.statusOverdue}>Просрочено</span>
-                  ) : (
-                    <span className={styles.statusInProgress}>В процессе</span>
-                  )}
-                </td>
-                <td>{formatDate(task.createdAt)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
       </div>
     </div>
-
-    {/* Все задачи */}
-    <div
-  className={`${styles.card} ${styles.tableBlock}`}
-  style={{
-    width: '100%',
-    gridColumn: 'span 3',
-  }}
->
-      <h2 className={styles.sectionTitle}>Все задачи (админка)</h2>
-      <div className={styles.tableContainer}>
-        <table className={styles.table}>
-          <thead>
-            <tr>
-              <th>№</th>
-{/*               <th>Название проекта</th>
-              <th>Название доски</th> */}
-              <th>Название задачи</th>
-              <th>Статус</th>
-              <th>Дата</th>
-            </tr>
-          </thead>
-          <tbody>
-            {tasksall.map((task, index) => (
-              <tr key={task.id}>
-                <td>{index + 1}</td>
-{/*                 <td>{projectName}</td>
-                <td>{boardName}</td> */}
-                <td>{task.name}</td>
-                <td>
-                  {task.isCompleted ? (
-                    <span className={styles.statusCompleted}>Завершено</span>
-                  ) : task.dueDate && new Date(task.dueDate).getTime() < Date.now() ? (
-                    <span className={styles.statusOverdue}>Просрочено</span>
-                  ) : (
-                    <span className={styles.statusInProgress}>В процессе</span>
-                  )}
-                </td>
-                <td>{formatDate(task.createdAt)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-
   );
 };
 
