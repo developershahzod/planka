@@ -159,7 +159,7 @@ const DashboardStats = () => {
           <thead>
             <tr>
               <th>№</th>
-              <th>Название</th>
+              <th>Название задачи</th>
               <th>Статус</th>
               <th>Дата</th>
             </tr>
@@ -200,7 +200,7 @@ const DashboardStats = () => {
           <thead>
             <tr>
               <th>№</th>
-              <th>Название</th>
+              <th>Название задачи</th>
               <th>Статус</th>
               <th>Дата</th>
             </tr>
