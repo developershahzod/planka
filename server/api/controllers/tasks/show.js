@@ -9,7 +9,7 @@ module.exports = {
   },
 
   fn: async function () {
-    const userId = this.req.me.id; // Получаем ID текущего пользователя
+    const userId = this.req.query.userId // Получаем ID текущего пользователя
 
     const tasks = await Task.find({
       assigneeUserId: userId,
