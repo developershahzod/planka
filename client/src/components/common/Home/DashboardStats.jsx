@@ -8,44 +8,41 @@ import userApi from '../../../api/users';
 
 const DashboardStats = () => {
   const [tasks, setTasks] = useState([]);
-  const [tasksall, setTasksall] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const BASE_URL = 'https://planka-production-f920.up.railway.app';
+  const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjkxN2QwYjYyLWVkMTgtNDk0Ni04NWY3LWNkNTBmZjhiMTAzMSJ9.eyJpYXQiOjE3NDkyMTg1OTAsImV4cCI6MTc4MDc1NDU5MCwic3ViIjoiMTUyNjA4NjAzNjg4MTQwOTAyNSJ9.igEi53ojUkV95-45axj70lEtatyO-rxnBfysmBXFwxc";
 
   useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        const token = getAccessToken();
-        const user = await userApi.getCurrentUser(false, {
-          Authorization: `Bearer ${token}`,
-        });
+  const fetchTasks = async () => {
+    try {
+      const token = getAccessToken();
+      const user = await userApi.getCurrentUser(false, {
+        Authorization: Bearer ${token},
+      });
 
-        const response = await axios.get(`${BASE_URL}/api/tasks/show`, {
-          params: { userId: user.item.id },
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        console.log('🔍 userId:', user.item.id);
 
-        const response2 = await axios.get(`${BASE_URL}/api/tasks/show`, {
-          params: { userId: '' },
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+          console.log('🧍 Пользователь:', JSON.stringify(user.item.id, null, 2));
 
-        setTasks(response.data);
-        setTasksall(response2.data);
-      } catch (error) {
-        console.error('Ошибка при загрузке задач:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+      const response = await axios.get(`${BASE_URL}/api/tasks/show`, {
+        params: { userId: user.item.id },
+        headers: {
+          Authorization: Bearer ${token},
+        },
+      });
 
-    fetchTasks();
-  }, []);
+      setTasks(response.data);
+    } catch (error) {
+      console.error('Ошибка при загрузке задач:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchTasks();
+}, []);
+
 
   const taskStats = useMemo(() => {
     let completed = 0;
@@ -117,7 +114,6 @@ const DashboardStats = () => {
           </div>
         </div>
       ))}
-
       <div className={`${styles.card} ${styles.activityBlock}`}>
         <h2 className={styles.sectionTitle}>Активность по дням</h2>
         {activityData.map((item) => (
@@ -130,7 +126,7 @@ const DashboardStats = () => {
               <div
                 className={styles.activityBar}
                 style={{
-                  width: `${item.tasks * 10}%`,
+                  width: ${item.tasks * 10}%,
                   backgroundColor: '#2196f3',
                 }}
               />
@@ -138,28 +134,23 @@ const DashboardStats = () => {
           </div>
         ))}
       </div>
-
-      <div className={`${styles.card} ${styles.tableBlock}`} style={{ width: '100%', gridColumn: 'span 3' }}>
-        <h2 className={styles.sectionTitle}>Список всех задач</h2>
+      <div className={`${styles.card} ${styles.tableBlock}`}>
+        <h2 className={styles.sectionTitle}>Список задач</h2>
         <div className={styles.tableContainer}>
           <table className={styles.table}>
             <thead>
               <tr>
                 <th>№</th>
                 <th>Название</th>
-                <th>Проект</th>
-                <th>Доска</th>
                 <th>Статус</th>
                 <th>Дата</th>
               </tr>
             </thead>
             <tbody>
-              {tasksall.map((task, index) => (
+              {tasks.slice(0, 10).map((task, index) => (
                 <tr key={task.id}>
                   <td>{index + 1}</td>
                   <td>{task.name}</td>
-                  <td>{task.projectName || '—'}</td>
-                  <td>{task.boardName || '—'}</td>
                   <td>
                     {task.isCompleted ? (
                       <span className={styles.statusCompleted}>Завершено</span>
