@@ -2,7 +2,7 @@ import React, { useMemo, useEffect, useState } from 'react';
 import axios from 'axios';
 import styles from './DashboardStats.module.scss';
 
-import { getCurrentUser } from '../../../api/users';
+import userApi from '../../../api/users';
 
 const DashboardStats = () => {
   const [tasks, setTasks] = useState([]);
@@ -14,7 +14,7 @@ const DashboardStats = () => {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const user = await getCurrentUser();
+        const user = await userApi.getCurrentUser();
 
 
         const response = await axios.get(`${BASE_URL}/api/tasks/show`, {
