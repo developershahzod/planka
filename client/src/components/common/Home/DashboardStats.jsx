@@ -200,8 +200,8 @@ const DashboardStats = () => {
           <thead>
             <tr>
               <th>№</th>
-              <th>Название проекта</th>
-              <th>Название доски</th>
+{/*               <th>Название проекта</th>
+              <th>Название доски</th> */}
               <th>Название задачи</th>
               <th>Статус</th>
               <th>Дата</th>
@@ -211,8 +211,8 @@ const DashboardStats = () => {
             {tasksall.map((task, index) => (
               <tr key={task.id}>
                 <td>{index + 1}</td>
-                <td>{projectName}</td>
-                <td>{boardName}</td>
+{/*                 <td>{projectName}</td>
+                <td>{boardName}</td> */}
                 <td>{task.name}</td>
                 <td>
                   {task.isCompleted ? (
