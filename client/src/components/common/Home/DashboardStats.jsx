@@ -7,7 +7,7 @@ const DashboardStats = () => {
   const [loading, setLoading] = useState(true);
 
   const BASE_URL = 'https://planka-production-f920.up.railway.app';
-  const TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjkxN2QwYjYyLWVkMTgtNDk0Ni04NWY3LWNkNTBmZjhiMTAzMSJ9.eyJpYXQiOjE3NDkyMTg1OTAsImV4cCI6MTc4MDc1NDU5MCwic3ViIjoiMTUyNjA4NjAzNjg4MTQwOTAyNSJ9.igEi53ojUkV95-45axj70lEtatyO-rxnBfysmBXFwxc';
+  const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjkxN2QwYjYyLWVkMTgtNDk0Ni04NWY3LWNkNTBmZjhiMTAzMSJ9.eyJpYXQiOjE3NDkyMTg1OTAsImV4cCI6MTc4MDc1NDU5MCwic3ViIjoiMTUyNjA4NjAzNjg4MTQwOTAyNSJ9.igEi53ojUkV95-45axj70lEtatyO-rxnBfysmBXFwxc";
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -52,11 +52,6 @@ const DashboardStats = () => {
     ];
   }, [tasks]);
 
-  const totalTasks = taskStats.reduce((sum, t) => sum + t.value, 0);
-  const progressPercent = totalTasks
-    ? Math.round((taskStats[0].value / totalTasks) * 100)
-    : 0;
-
   const activityData = useMemo(() => {
     const days = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
     const map = new Array(7).fill(0);
@@ -83,11 +78,12 @@ const DashboardStats = () => {
   if (loading) return <div>Загрузка задач...</div>;
 
   return (
-    <div className={styles.wrapper}>
-      <div className={styles.card}>
-        <h2 className={styles.sectionTitle}>Статистика задач</h2>
-        {taskStats.map((item) => (
-          <div key={item.name} className={styles.statRow}>
+    <div className={styles.gridWrapper}>
+      {/* 3 статистики */}
+      {taskStats.map((item) => (
+        <div key={item.name} className={styles.card}>
+          <h2 className={styles.sectionTitle}>{item.name}</h2>
+          <div className={styles.statRow}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <div
                 style={{
@@ -101,28 +97,11 @@ const DashboardStats = () => {
             </div>
             <strong>{item.value}</strong>
           </div>
-        ))}
-        <div style={{ marginTop: 12 }}>
-          <div className={styles.progressBarBackground}>
-            <div
-              className={styles.progressBarValue}
-              style={{ width: `${progressPercent}%` }}
-            />
-          </div>
-          <div
-            style={{
-              textAlign: 'right',
-              marginTop: 4,
-              color: '#4caf50',
-              fontWeight: 500,
-            }}
-          >
-            {progressPercent}%
-          </div>
         </div>
-      </div>
+      ))}
 
-      <div className={styles.card}>
+      {/* Активность по дням */}
+      <div className={`${styles.card} ${styles.activityBlock}`}>
         <h2 className={styles.sectionTitle}>Активность по дням</h2>
         {activityData.map((item) => (
           <div key={item.day} style={{ marginBottom: 10 }}>
@@ -143,7 +122,8 @@ const DashboardStats = () => {
         ))}
       </div>
 
-      <div className={styles.card}>
+      {/* Таблица */}
+      <div className={`${styles.card} ${styles.tableBlock}`}>
         <h2 className={styles.sectionTitle}>Список задач</h2>
         <div className={styles.tableContainer}>
           <table className={styles.table}>
