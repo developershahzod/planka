@@ -1,6 +1,14 @@
 module.exports = {
-  friendlyName: 'Show all tasks',
-  description: 'Returns all tasks (no user filtering)',
+  friendlyName: 'Show tasks by user',
+  description: 'Returns tasks for a specific user',
+
+  inputs: {
+    userId: {
+      type: 'string',
+      required: true,
+      description: 'ID пользователя, чьи задачи нужно вернуть',
+    },
+  },
 
   exits: {
     success: {
@@ -8,8 +16,8 @@ module.exports = {
     },
   },
 
-  fn: async function () {
-    const tasks = await Task.find();
+  fn: async function ({ userId }) {
+    const tasks = await Task.find({ userId });
 
     return tasks.map((task) => ({
       id: task.id,
