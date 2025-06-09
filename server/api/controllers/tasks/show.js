@@ -1,6 +1,6 @@
 module.exports = {
   friendlyName: 'Show tasks by user',
-  description: 'Returns tasks assigned to the current user',
+  description: 'Returns tasks assigned to the current user or all if no userId provided',
 
   exits: {
     success: {
@@ -9,21 +9,34 @@ module.exports = {
   },
 
   fn: async function () {
-    const userId = this.req.query.userId // Получаем ID текущего пользователя
+    const userId = this.req.query.userId;
 
-    const tasks = await Task.find({
-      assigneeUserId: userId,
-    });
+    const criteria = userId ? { assigneeUserId: userId } : {};
 
-    return tasks.map((task) => ({
-      id: task.id,
-      taskListId: task.taskListId,
-      name: task.name,
-      position: task.position,
-      isCompleted: task.isCompleted,
-      createdAt: task.createdAt,
-      updatedAt: task.updatedAt,
-      assigneeUserId: task.assigneeUserId,
-    }));
+    const tasks = await Task.find(criteria)
+      .populate('taskListId');
+
+    const enrichedTasks = await Promise.all(
+      tasks.map(async (task) => {
+        const taskList = task.taskListId;
+        const board = taskList ? await Board.findOne({ id: taskList.boardId }) : null;
+        const project = board ? await Project.findOne({ id: board.projectId }) : null;
+
+        return {
+          id: task.id,
+          taskListId: task.taskListId?.id,
+          name: task.name,
+          position: task.position,
+          isCompleted: task.isCompleted,
+          createdAt: task.createdAt,
+          updatedAt: task.updatedAt,
+          assigneeUserId: task.assigneeUserId,
+          boardName: board?.name || null,
+          projectName: project?.name || null,
+        };
+      })
+    );
+
+    return enrichedTasks;
   },
 };
