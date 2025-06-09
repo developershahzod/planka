@@ -149,11 +149,14 @@ const Header = React.memo(() => {
               className={classNames(styles.item, styles.itemHoverable)}
               onClick={handleToggleEditModeClick}
             >
+               <Link
+          to={'/docs/}>
               <Icon
                 fitted
                 name={isEditModeEnabled ? 'file alternate outline' : 'file alternate outline'}
                
               />
+            </Link>
             </Menu.Item>
           <NotificationsPopup>
             <Menu.Item className={classNames(styles.item, styles.itemHoverable)}>
