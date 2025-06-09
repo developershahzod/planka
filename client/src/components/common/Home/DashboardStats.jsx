@@ -31,15 +31,32 @@ const DashboardStats = () => {
           },
         });
 
-        const response2 = await axios.get(`${BASE_URL}/api/tasks/show`, {
-          params: { userId: '' },
+        setTasks(response.data);
+      } catch (error) {
+        console.log('Ошибка при загрузке задач:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const fetchTasks2 = async () => {
+      try {
+        const token = getAccessToken();
+        console.log('🔥 TOKEN:', token);
+        const user = await userApi.getCurrentUser(false, {Authorization: `Bearer ${token}`});
+
+        console.log('🔍 userId:', user.item.id);
+        console.log('🧍 Пользователь:', JSON.stringify(user.item.id, null, 2));
+
+  
+        const response = await axios.get(`${BASE_URL}/api/tasks/show`, {
+          params: { userId: undefined  },
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
 
-        setTasks(response.data);
-        setTasksall(response2.data);
+        setTasksall(response.data);
       } catch (error) {
         console.log('Ошибка при загрузке задач:', error);
       } finally {
@@ -48,6 +65,7 @@ const DashboardStats = () => {
     };
 
     fetchTasks();
+    fetchTasks2();
   }, []);
 
   const taskStats = useMemo(() => {
