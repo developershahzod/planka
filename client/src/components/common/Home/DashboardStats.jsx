@@ -104,8 +104,10 @@ const DashboardStats = () => {
   if (loading) return <div>Загрузка задач...</div>;
 
   return (
-    <div className={styles.gridWrapper}>
-      {/* 3 статистики */}
+   return (
+  <div className={styles.gridWrapper}>
+    {/* 3 статистики */}
+    <div className={styles.row}>
       {taskStats.map((item) => (
         <div key={item.name} className={styles.card}>
           <h2 className={styles.sectionTitle}>{item.name}</h2>
@@ -125,66 +127,74 @@ const DashboardStats = () => {
           </div>
         </div>
       ))}
+    </div>
 
-      {/* Активность по дням */}
-      <div className={`${styles.card} ${styles.activityBlock}`}>
-        <h2 className={styles.sectionTitle}>Активность по дням</h2>
-        {activityData.map((item) => (
-          <div key={item.day} style={{ marginBottom: 10 }}>
-            <div className={styles.statRow}>
-              <span>{item.day}</span>
-              <span>{item.tasks} задач</span>
-            </div>
-            <div className={styles.progressBarBackground}>
-              <div
-                className={styles.activityBar}
-                style={{
-                  width: `${item.tasks * 10}%`,
-                  backgroundColor: '#2196f3',
-                }}
-              />
-            </div>
+    {/* Активность по дням */}
+    <div className={`${styles.card} ${styles.activityBlock}`}>
+      <h2 className={styles.sectionTitle}>Активность по дням</h2>
+      {activityData.map((item) => (
+        <div key={item.day} style={{ marginBottom: 10 }}>
+          <div className={styles.statRow}>
+            <span>{item.day}</span>
+            <span>{item.tasks} задач</span>
           </div>
-        ))}
-      </div>
-
-      {/* Таблица */}
-      <div className={`${styles.card} ${styles.tableBlock}`}>
-        <h2 className={styles.sectionTitle}>Список задач</h2>
-        <div className={styles.tableContainer}>
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>№</th>
-                <th>Название</th>
-                <th>Статус</th>
-                <th>Дата</th>
-              </tr>
-            </thead>
-            <tbody>
-              {tasks.slice(0, 10).map((task, index) => (
-                <tr key={task.id}>
-                  <td>{index + 1}</td>
-                  <td>{task.name}</td>
-                  <td>
-                    {task.isCompleted ? (
-                      <span className={styles.statusCompleted}>Завершено</span>
-                    ) : task.dueDate && new Date(task.dueDate).getTime() < Date.now() ? (
-                      <span className={styles.statusOverdue}>Просрочено</span>
-                    ) : (
-                      <span className={styles.statusInProgress}>В процессе</span>
-                    )}
-                  </td>
-                  <td>{formatDate(task.createdAt)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <div className={styles.progressBarBackground}>
+            <div
+              className={styles.activityBar}
+              style={{
+                width: `${item.tasks * 10}%`,
+                backgroundColor: '#2196f3',
+              }}
+            />
+          </div>
         </div>
-      </div>
+      ))}
+    </div>
 
+    {/* Персональные задачи */}
     <div className={`${styles.card} ${styles.tableBlock}`}>
-      <h2 className={styles.sectionTitle}>Список задач</h2>
+      <h2 className={styles.sectionTitle}>Мои задачи</h2>
+      <div className={styles.tableContainer}>
+        <table className={styles.table}>
+          <thead>
+            <tr>
+              <th>№</th>
+              <th>Название</th>
+              <th>Статус</th>
+              <th>Дата</th>
+            </tr>
+          </thead>
+          <tbody>
+            {tasks.slice(0, 10).map((task, index) => (
+              <tr key={task.id}>
+                <td>{index + 1}</td>
+                <td>{task.name}</td>
+                <td>
+                  {task.isCompleted ? (
+                    <span className={styles.statusCompleted}>Завершено</span>
+                  ) : task.dueDate && new Date(task.dueDate).getTime() < Date.now() ? (
+                    <span className={styles.statusOverdue}>Просрочено</span>
+                  ) : (
+                    <span className={styles.statusInProgress}>В процессе</span>
+                  )}
+                </td>
+                <td>{formatDate(task.createdAt)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    {/* Все задачи */}
+    <div
+  className={`${styles.card} ${styles.tableBlock}`}
+  style={{
+    width: '100%',
+    gridColumn: 'span 3',
+  }}
+>
+      <h2 className={styles.sectionTitle}>Все задачи (админка)</h2>
       <div className={styles.tableContainer}>
         <table className={styles.table}>
           <thead>
@@ -216,6 +226,9 @@ const DashboardStats = () => {
         </table>
       </div>
     </div>
+  </div>
+);
+
   );
 };
 
