@@ -12,11 +12,15 @@ const DashboardStats = () => {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
+        const userId = this.req.me.id;
+
+
         const response = await axios.get(`${BASE_URL}/api/tasks/show`, {
-          headers: {
-            Authorization: `Bearer ${TOKEN}`,
-          },
-        });
+            params: { userId },
+            headers: {
+              Authorization: `Bearer ${TOKEN}`,
+            },
+          });
         setTasks(response.data);
       } catch (error) {
         console.error('Ошибка при загрузке задач:', error);
