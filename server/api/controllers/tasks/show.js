@@ -6,7 +6,6 @@ module.exports = {
     userId: {
       type: 'string',
       required: true,
-      description: 'ID пользователя, чьи задачи нужно вернуть',
     },
   },
 
@@ -16,7 +15,13 @@ module.exports = {
     },
   },
 
-  fn: async function ({ userId }) {
+  fn: async function () {
+    const userId = this.req.query.userId;
+
+    if (!userId) {
+      return this.res.badRequest({ message: 'userId is required' });
+    }
+
     const tasks = await Task.find({ userId });
 
     return tasks.map((task) => ({
