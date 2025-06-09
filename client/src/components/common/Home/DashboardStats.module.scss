@@ -2,7 +2,6 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 16px;
-  padding: 16px;
 }
 
 .card {
@@ -19,8 +18,8 @@
 }
 
 .sectionTitle {
-  margin-bottom: 16px;
-  font-size: 18px;
+  margin-bottom: 20px;
+  font-size: 22px;
   font-weight: 600;
 
 }
