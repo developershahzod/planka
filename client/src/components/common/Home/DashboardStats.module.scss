@@ -80,3 +80,88 @@
   color: #f44336;
   font-weight: 500;
 }
+
+
+.gridWrapper {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: auto auto;
+  gap: 20px;
+  padding: 20px;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  background: white;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.sectionTitle {
+  font-size: 18px;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.statRow {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.progressBarBackground {
+  width: 100%;
+  height: 8px;
+  background-color: #eee;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.activityBar {
+  height: 8px;
+  background-color: #2196f3;
+  border-radius: 4px;
+}
+
+.tableContainer {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+}
+
+.statusCompleted {
+  color: #4caf50;
+  font-weight: bold;
+}
+
+.statusInProgress {
+  color: #ff9800;
+  font-weight: bold;
+}
+
+.statusOverdue {
+  color: #f44336;
+  font-weight: bold;
+}
+
+.activityBlock {
+  grid-column: span 1;
+}
+
+.tableBlock {
+  grid-column: span 2;
+}
+
