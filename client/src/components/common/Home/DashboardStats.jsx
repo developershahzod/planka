@@ -89,7 +89,7 @@ const DashboardStats = () => {
           <div className={styles.progressBarBackground}>
             <div
               className={styles.progressBarValue}
-              style={{ width: ${progressPercent}% }}
+              style={{ width: `${progressPercent}%` }}
             />
           </div>
           <div
@@ -118,7 +118,7 @@ const DashboardStats = () => {
               <div
                 className={styles.activityBar}
                 style={{
-                  width: ${item.tasks * 10}%,
+                  width: `${item.tasks * 10}%`,
                   backgroundColor: '#2196f3',
                 }}
               />
