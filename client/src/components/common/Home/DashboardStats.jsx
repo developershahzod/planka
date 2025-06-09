@@ -21,12 +21,12 @@ const DashboardStats = () => {
         Authorization: `Bearer ${token}`,
       });
 
-        console.log('🔍 userId:', user.id);
+        console.log('🔍 userId:', user.item.id);
 
-          console.log('🧍 Пользователь:', JSON.stringify(user, null, 2));
+          console.log('🧍 Пользователь:', JSON.stringify(user.item.id, null, 2));
 
       const response = await axios.get(`${BASE_URL}/api/tasks/show`, {
-        params: { userId: user.id },
+        params: { userId: user.item.id },
         headers: {
           Authorization: `Bearer ${token}`,
         },
