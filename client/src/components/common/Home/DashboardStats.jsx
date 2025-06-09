@@ -1,16 +1,22 @@
-/*!
- * Copyright (c) 2024 PLANKA Software GmbH
- * Licensed under the Fair Use License: https://github.com/plankanban/planka/blob/master/LICENSE.md
- */
-
-import React, { useMemo } from 'react';
-import { useSelector } from 'react-redux';
-
-import selectors from '../../../selectors';
+import React, { useMemo, useEffect, useState } from 'react';
+import axios from 'axios';
 import styles from './DashboardStats.module.scss';
 
 const DashboardStats = () => {
-  const tasks = useSelector(selectors.selectTasks);
+  const [tasks, setTasks] = useState([]);
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const response = await axios.get('https://metabase-production-80f5.up.railway.app/api/task/');
+        setTasks(response.data);
+      } catch (error) {
+        console.error('Ошибка при загрузке задач:', error);
+      }
+    };
+
+    fetchTasks();
+  }, []);
 
   const taskStats = useMemo(() => {
     let completed = 0;
@@ -42,7 +48,7 @@ const DashboardStats = () => {
     : 0;
 
   const activityData = useMemo(() => {
-    const days = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+    const days = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
     const map = new Array(7).fill(0);
 
     tasks.forEach((task) => {
