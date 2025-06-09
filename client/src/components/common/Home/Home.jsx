@@ -11,7 +11,7 @@ import { HomeViews } from '../../../constants/Enums';
 import GridProjectsView from './GridProjectsView';
 import GroupedProjectsView from './GroupedProjectsView';
 
-import DashboardStats from './DashboardStats';
+// import DashboardStats from './DashboardStats';
 
 
 
