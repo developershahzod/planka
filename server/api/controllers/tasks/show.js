@@ -1,13 +1,6 @@
 module.exports = {
   friendlyName: 'Show tasks by user',
-  description: 'Returns tasks for a specific user',
-
-  inputs: {
-    userId: {
-      type: 'string',
-      required: true,
-    },
-  },
+  description: 'Returns tasks assigned to the current user',
 
   exits: {
     success: {
@@ -16,13 +9,11 @@ module.exports = {
   },
 
   fn: async function () {
-    const userId = this.req.query.userId;
+    const userId = this.req.me.id; // Получаем ID текущего пользователя
 
-    if (!userId) {
-      return this.res.badRequest({ message: 'userId is required' });
-    }
-
-    const tasks = await Task.find({ userId });
+    const tasks = await Task.find({
+      assigneeUserId: userId,
+    });
 
     return tasks.map((task) => ({
       id: task.id,
@@ -32,6 +23,7 @@ module.exports = {
       isCompleted: task.isCompleted,
       createdAt: task.createdAt,
       updatedAt: task.updatedAt,
+      assigneeUserId: task.assigneeUserId,
     }));
   },
 };
