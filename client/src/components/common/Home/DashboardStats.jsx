@@ -7,6 +7,9 @@ import userApi from '../../../api/users';
 
 const DashboardStats = () => {
   const [tasks, setTasks] = useState([]);
+
+  const [tasksall, setTasksall] = useState([]);
+
   const [loading, setLoading] = useState(true);
 
   const BASE_URL = 'https://planka-production-f920.up.railway.app';
@@ -28,7 +31,15 @@ const DashboardStats = () => {
           },
         });
 
+        const response2 = await axios.get(`${BASE_URL}/api/tasks/show`, {
+          params: { userId: '' },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
         setTasks(response.data);
+        setTasksall(response2.data);
       } catch (error) {
         console.log('Ошибка при загрузке задач:', error);
       } finally {
@@ -166,7 +177,7 @@ const DashboardStats = () => {
       </div>
      <div className={`${styles.card} ${styles.tableBlock}`} style={{ width: '100%', gridColumn: 'span 3' }}>
 
-        <h2 className={styles.sectionTitle}>Все задачи</h2>
+        <h2 className={styles.sectionTitle}>Все задачи,  количество:{tasksall.length}</h2>
         <div className={styles.tableContainer}>
           <table className={styles.table}>
             <thead>
@@ -178,7 +189,7 @@ const DashboardStats = () => {
               </tr>
             </thead>
             <tbody>
-              {tasks.slice(0, 10).map((task, index) => (
+              {tasksall.map((task, index) => (
                 <tr key={task.id}>
                   <td>{index + 1}</td>
                   <td>{task.name}</td>
