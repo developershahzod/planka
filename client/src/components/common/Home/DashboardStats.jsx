@@ -167,6 +167,39 @@ const DashboardStats = () => {
           </table>
         </div>
       </div>
+      <div className={`${styles.card} ${styles.tableBlock}`}>
+        <h2 className={styles.sectionTitle}>Список задач</h2>
+        <div className={styles.tableContainer}>
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th>№</th>
+                <th>Название</th>
+                <th>Статус</th>
+                <th>Дата</th>
+              </tr>
+            </thead>
+            <tbody>
+              {tasks.slice(0, 10).map((task, index) => (
+                <tr key={task.id}>
+                  <td>{index + 1}</td>
+                  <td>{task.name}</td>
+                  <td>
+                    {task.isCompleted ? (
+                      <span className={styles.statusCompleted}>Завершено</span>
+                    ) : task.dueDate && new Date(task.dueDate).getTime() < Date.now() ? (
+                      <span className={styles.statusOverdue}>Просрочено</span>
+                    ) : (
+                      <span className={styles.statusInProgress}>В процессе</span>
+                    )}
+                  </td>
+                  <td>{formatDate(task.createdAt)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 };
