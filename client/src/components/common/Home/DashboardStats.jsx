@@ -3,7 +3,6 @@ import axios from 'axios';
 import styles from './DashboardStats.module.scss';
 
 import { getAccessToken } from '../../../utils/access-token-storage';
-
 import userApi from '../../../api/users';
 
 const DashboardStats = () => {
@@ -11,38 +10,37 @@ const DashboardStats = () => {
   const [loading, setLoading] = useState(true);
 
   const BASE_URL = 'https://planka-production-f920.up.railway.app';
-  const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjkxN2QwYjYyLWVkMTgtNDk0Ni04NWY3LWNkNTBmZjhiMTAzMSJ9.eyJpYXQiOjE3NDkyMTg1OTAsImV4cCI6MTc4MDc1NDU5MCwic3ViIjoiMTUyNjA4NjAzNjg4MTQwOTAyNSJ9.igEi53ojUkV95-45axj70lEtatyO-rxnBfysmBXFwxc";
 
   useEffect(() => {
-  const fetchTasks = async () => {
-    try {
-      const token = getAccessToken();
-      const user = await userApi.getCurrentUser(false, {
-        Authorization: `Bearer ${token}`,
-      });
+    const fetchTasks = async () => {
+      try {
+        const token = getAccessToken();
+        const user = await userApi.getCurrentUser(false, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         console.log('🔍 userId:', user.item.id);
+        console.log('🧍 Пользователь:', JSON.stringify(user.item.id, null, 2));
 
-          console.log('🧍 Пользователь:', JSON.stringify(user.item.id, null, 2));
+        const response = await axios.get(`${BASE_URL}/api/tasks/show`, {
+          params: { userId: user.item.id },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-      const response = await axios.get(`${BASE_URL}/api/tasks/show`, {
-        params: { userId: user.item.id },
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+        setTasks(response.data);
+      } catch (error) {
+        console.error('Ошибка при загрузке задач:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-      setTasks(response.data);
-    } catch (error) {
-      console.error('Ошибка при загрузке задач:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  fetchTasks();
-}, []);
-
+    fetchTasks();
+  }, []);
 
   const taskStats = useMemo(() => {
     let completed = 0;
@@ -114,6 +112,7 @@ const DashboardStats = () => {
           </div>
         </div>
       ))}
+
       <div className={`${styles.card} ${styles.activityBlock}`}>
         <h2 className={styles.sectionTitle}>Активность по дням</h2>
         {activityData.map((item) => (
@@ -126,7 +125,7 @@ const DashboardStats = () => {
               <div
                 className={styles.activityBar}
                 style={{
-                  width: ${item.tasks * 10}%,
+                  width: `${item.tasks * 10}%`,
                   backgroundColor: '#2196f3',
                 }}
               />
@@ -134,6 +133,7 @@ const DashboardStats = () => {
           </div>
         ))}
       </div>
+
       <div className={`${styles.card} ${styles.tableBlock}`}>
         <h2 className={styles.sectionTitle}>Список задач</h2>
         <div className={styles.tableContainer}>
