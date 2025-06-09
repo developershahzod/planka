@@ -8,7 +8,20 @@ const DashboardStats = () => {
 
   const BASE_URL = 'https://metabase-production-80f5.up.railway.app';
 
- 
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}/api/tasks`);
+        setTasks(response.data);
+      } catch (error) {
+        console.error('Ошибка при загрузке задач:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTasks();
+  }, []);
 
   const taskStats = useMemo(() => {
     let completed = 0;
