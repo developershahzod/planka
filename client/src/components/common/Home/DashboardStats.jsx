@@ -12,7 +12,7 @@ const DashboardStats = () => {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const response = await axios.get(`${BASE_URL}/api/tasks`, {
+        const response = await axios.get(`${BASE_URL}/api/tasks/show`, {
           headers: {
             Authorization: `Bearer ${TOKEN}`,
           },
