@@ -104,7 +104,7 @@ const DashboardStats = () => {
   if (loading) return <div>Загрузка задач...</div>;
 
   return (
-   return (
+
   <div className={styles.gridWrapper}>
     {/* 3 статистики */}
     <div className={styles.row}>
@@ -227,7 +227,7 @@ const DashboardStats = () => {
       </div>
     </div>
   </div>
-);
+
 
   );
 };
