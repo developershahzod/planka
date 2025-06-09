@@ -5,7 +5,6 @@
 }
 
 .card {
-      height: 400px;
     color: white;
     background: #181a1d;
     border-radius: 10px;
@@ -94,18 +93,8 @@
   }
 }
 
-.card {
-  background: white;
-  padding: 16px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
 
-.sectionTitle {
-  font-size: 18px;
-  margin-bottom: 12px;
-  font-weight: 600;
-}
+
 
 .statRow {
   display: flex;
@@ -113,13 +102,7 @@
   margin-bottom: 8px;
 }
 
-.progressBarBackground {
-  width: 100%;
-  height: 8px;
-  background-color: #eee;
-  border-radius: 4px;
-  overflow: hidden;
-}
+
 
 .activityBar {
   height: 8px;
