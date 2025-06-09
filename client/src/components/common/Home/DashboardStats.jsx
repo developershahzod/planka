@@ -12,27 +12,30 @@ const DashboardStats = () => {
   const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjkxN2QwYjYyLWVkMTgtNDk0Ni04NWY3LWNkNTBmZjhiMTAzMSJ9.eyJpYXQiOjE3NDkyMTg1OTAsImV4cCI6MTc4MDc1NDU5MCwic3ViIjoiMTUyNjA4NjAzNjg4MTQwOTAyNSJ9.igEi53ojUkV95-45axj70lEtatyO-rxnBfysmBXFwxc";
 
   useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        const user = await userApi.getCurrentUser();
+  const fetchTasks = async () => {
+    try {
+      const user = await userApi.getCurrentUser(false, {
+        Authorization: `Bearer ${TOKEN}`,
+      });
 
+      const response = await axios.get(`${BASE_URL}/api/tasks/show`, {
+        params: { userId: user.id },
+        headers: {
+          Authorization: `Bearer ${TOKEN}`,
+        },
+      });
 
-        const response = await axios.get(`${BASE_URL}/api/tasks/show`, {
-            params: { "userId": user.id },
-            headers: {
-              Authorization: `Bearer ${TOKEN}`,
-            },
-          });
-        setTasks(response.data);
-      } catch (error) {
-        console.error('Ошибка при загрузке задач:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+      setTasks(response.data);
+    } catch (error) {
+      console.error('Ошибка при загрузке задач:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchTasks();
-  }, []);
+  fetchTasks();
+}, []);
+
 
   const taskStats = useMemo(() => {
     let completed = 0;
