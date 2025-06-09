@@ -2,6 +2,8 @@ import React, { useMemo, useEffect, useState } from 'react';
 import axios from 'axios';
 import styles from './DashboardStats.module.scss';
 
+import { getCurrentUser } from '@/api/users';
+
 const DashboardStats = () => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -12,11 +14,11 @@ const DashboardStats = () => {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const userId = "1526086036881409025";
+        const user = await getCurrentUser();
 
 
         const response = await axios.get(`${BASE_URL}/api/tasks/show`, {
-            params: { userId },
+            params: { "userId": user.id },
             headers: {
               Authorization: `Bearer ${TOKEN}`,
             },
