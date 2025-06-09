@@ -35,8 +35,10 @@ const Home = React.memo(() => {
 
   return (
     <div className={styles.wrapper}>
-      <DashboardStats />
+
       <View />
+
+      <DashboardStats />
     </div>
   );
 });
