@@ -1,29 +1,31 @@
-module.exports = {
-  friendlyName: 'Show tasks by user',
-  description: 'Returns tasks assigned to the current user',
+fn: async function () {
+  const userId = this.req.query.userId;
 
-  exits: {
-    success: {
-      description: 'Tasks retrieved successfully',
-    },
-  },
+  const tasks = await Task.find({
+    assigneeUserId: userId,
+  });
 
-  fn: async function () {
-    const userId = this.req.query.userId
+  const tasksWithDetails = await Promise.all(
+    tasks.map(async (task) => {
+      try {
+        const taskList = await TaskList.qm.getOneById(task.taskListId);
+        const board = await Board.qm.getOneById(taskList.boardId);
+        const project = await Project.qm.getOneById(board.projectId);
 
-    const tasks = await Task.find({
-      assigneeUserId: userId,
-    });
+        return {
+          id: task.id,
+          name: task.name,
+          isCompleted: task.isCompleted,
+          createdAt: task.createdAt,
+          boardName: board.name,
+          projectName: project.name,
+        };
+      } catch (err) {
+        console.error(`Ошибка при обработке task.id=${task.id}:`, err);
+        return null;
+      }
+    })
+  );
 
-    return tasks.map((task) => ({
-      id: task.id,
-      taskListId: task.taskListId,
-      name: task.name,
-      position: task.position,
-      isCompleted: task.isCompleted,
-      createdAt: task.createdAt,
-      updatedAt: task.updatedAt,
-      assigneeUserId: task.assigneeUserId,
-    }));
-  },
-};
+  return tasksWithDetails.filter(Boolean);
+}
