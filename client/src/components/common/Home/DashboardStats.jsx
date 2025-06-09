@@ -4,14 +4,33 @@ import styles from './DashboardStats.module.scss';
 
 const DashboardStats = () => {
   const [tasks, setTasks] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const BASE_URL = 'https://metabase-production-80f5.up.railway.app';
 
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const response = await axios.get('https://metabase-production-80f5.up.railway.app/api/task/');
-        setTasks(response.data);
+        // Авторизация в Metabase
+        const authRes = await axios.post(`${BASE_URL}/api/session`, {
+          username: 'developershahzod@gmail.com', // <-- замени на свой логин
+          password: 'Shaha2001.Shaha2001',  // <-- и свой пароль
+        });
+
+        const sessionToken = authRes.data.id;
+
+        // Запрос задач с токеном
+        const taskRes = await axios.get(`${BASE_URL}/api/task/`, {
+          headers: {
+            'X-Metabase-Session': sessionToken,
+          },
+        });
+
+        setTasks(taskRes.data);
       } catch (error) {
-        console.error('Ошибка при загрузке задач:', error);
+        console.error('❌ Ошибка при загрузке задач:', error.response?.data || error.message);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -69,6 +88,8 @@ const DashboardStats = () => {
       month: 'short',
       year: 'numeric',
     });
+
+  if (loading) return <div>Загрузка задач...</div>;
 
   return (
     <div className={styles.wrapper}>
