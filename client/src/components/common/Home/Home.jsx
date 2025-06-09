@@ -11,7 +11,7 @@ import { HomeViews } from '../../../constants/Enums';
 import GridProjectsView from './GridProjectsView';
 import GroupedProjectsView from './GroupedProjectsView';
 
-import DashboardStats from './DashboardStats'; 
+
 
 import styles from './Home.module.scss';
 
@@ -33,7 +33,7 @@ const Home = React.memo(() => {
 
   return (
     <div className={styles.wrapper}>
-      <DashboardStats />
+{/*       <DashboardStats /> */}
 
 
       <View />
