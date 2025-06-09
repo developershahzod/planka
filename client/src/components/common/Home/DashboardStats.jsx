@@ -8,6 +8,7 @@ import userApi from '../../../api/users';
 
 const DashboardStats = () => {
   const [tasks, setTasks] = useState([]);
+  const [tasksall, setTasksall] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const BASE_URL = 'https://planka-production-f920.up.railway.app';
@@ -32,7 +33,16 @@ const DashboardStats = () => {
         },
       });
 
+
+      const response2 = await axios.get(`${BASE_URL}/api/tasks/show`, {
+        params: { userId: '' },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
       setTasks(response.data);
+      setTasksall(response2.data);
     } catch (error) {
       console.error('Ошибка при загрузке задач:', error);
     } finally {
@@ -171,6 +181,39 @@ const DashboardStats = () => {
             </tbody>
           </table>
         </div>
+      </div>
+
+    <div className={`${styles.card} ${styles.tableBlock}`}>
+      <h2 className={styles.sectionTitle}>Список задач</h2>
+      <div className={styles.tableContainer}>
+        <table className={styles.table}>
+          <thead>
+            <tr>
+              <th>№</th>
+              <th>Название</th>
+              <th>Статус</th>
+              <th>Дата</th>
+            </tr>
+          </thead>
+          <tbody>
+            {tasksall.map((task, index) => (
+              <tr key={task.id}>
+                <td>{index + 1}</td>
+                <td>{task.name}</td>
+                <td>
+                  {task.isCompleted ? (
+                    <span className={styles.statusCompleted}>Завершено</span>
+                  ) : task.dueDate && new Date(task.dueDate).getTime() < Date.now() ? (
+                    <span className={styles.statusOverdue}>Просрочено</span>
+                  ) : (
+                    <span className={styles.statusInProgress}>В процессе</span>
+                  )}
+                </td>
+                <td>{formatDate(task.createdAt)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
