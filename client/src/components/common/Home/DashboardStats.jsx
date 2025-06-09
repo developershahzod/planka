@@ -18,7 +18,7 @@ const DashboardStats = () => {
     try {
       const token = getAccessToken();
       const user = await userApi.getCurrentUser(false, {
-        Authorization: Bearer ${token},
+        Authorization: `Bearer ${token}`,
       });
 
         console.log('🔍 userId:', user.item.id);
@@ -28,7 +28,7 @@ const DashboardStats = () => {
       const response = await axios.get(`${BASE_URL}/api/tasks/show`, {
         params: { userId: user.item.id },
         headers: {
-          Authorization: Bearer ${token},
+          Authorization: `Bearer ${token}`,
         },
       });
 
