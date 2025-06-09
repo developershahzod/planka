@@ -152,7 +152,7 @@ const Header = React.memo(() => {
               <Icon
                 fitted
                 name={isEditModeEnabled ? 'file alternate outline' : 'file alternate outline'}
-                className={classNames(styles.itemIconEnabled)}
+               
               />
             </Menu.Item>
           <NotificationsPopup>
