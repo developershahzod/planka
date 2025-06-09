@@ -1,16 +1,30 @@
-/*!
- * Copyright (c) 2024 PLANKA Software GmbH
- * Licensed under the Fair Use License: https://github.com/plankanban/planka/blob/master/LICENSE.md
- */
-
-import React, { useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import selectors from '../../../selectors';
+import actions from '../../../actions';
 import styles from './DashboardStats.module.scss';
 
 const DashboardStats = () => {
+  const dispatch = useDispatch();
+
+  const boards = useSelector(selectors.selectBoards);
+  const boardId = useSelector(selectors.selectCurrentBoardId);
   const tasks = useSelector(selectors.selectTasks);
+
+  // Загрузка первой доски при монтировании
+  useEffect(() => {
+    if (!boardId && boards.length > 0) {
+      dispatch(actions.fetchBoard(boards[0].id));
+    }
+  }, [boardId, boards, dispatch]);
+
+  // Загрузка задач для выбранной доски
+  useEffect(() => {
+    if (boardId) {
+      dispatch(actions.fetchBoard(boardId));
+    }
+  }, [boardId, dispatch]);
 
   const taskStats = useMemo(() => {
     let completed = 0;
