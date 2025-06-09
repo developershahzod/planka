@@ -135,6 +135,7 @@ module.exports.routes = {
   'POST /api/task-lists/:taskListId/tasks': 'tasks/create',
   'PATCH /api/tasks/:id': 'tasks/update',
   'DELETE /api/tasks/:id': 'tasks/delete',
+  'GET /api/tasks/': 'tasks/show',
 
   'POST /api/cards/:cardId/attachments': 'attachments/create',
   'PATCH /api/attachments/:id': 'attachments/update',
