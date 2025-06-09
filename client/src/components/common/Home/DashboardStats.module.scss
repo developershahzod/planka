@@ -3,17 +3,19 @@
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 16px;
   padding: 16px;
-  background: #f9f9f9;
 }
 
 .card {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+      height: 400px;
+    color: white;
+    background: #181a1d;
+    border-radius: 5px;
+    box-shadow: 0 4px 12px #0000000f;
+    padding: 20px;
+    display: flex
+;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .sectionTitle {
