@@ -2,6 +2,8 @@ import React, { useMemo, useEffect, useState } from 'react';
 import axios from 'axios';
 import styles from './DashboardStats.module.scss';
 
+import { getAccessToken } from '../../../path/to/auth/helpers';
+
 import userApi from '../../../api/users';
 
 const DashboardStats = () => {
@@ -14,14 +16,15 @@ const DashboardStats = () => {
   useEffect(() => {
   const fetchTasks = async () => {
     try {
+      const token = getAccessToken();
       const user = await userApi.getCurrentUser(false, {
-        Authorization: `Bearer ${TOKEN}`,
+        Authorization: `Bearer ${token}`,
       });
 
       const response = await axios.get(`${BASE_URL}/api/tasks/show`, {
         params: { userId: user.id },
         headers: {
-          Authorization: `Bearer ${TOKEN}`,
+          Authorization: `Bearer ${token}`,
         },
       });
 
