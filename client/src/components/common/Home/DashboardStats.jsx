@@ -6,12 +6,17 @@ const DashboardStats = () => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const BASE_URL = 'https://metabase-production-80f5.up.railway.app';
+  const BASE_URL = 'https://planka-production-f920.up.railway.app';
+  const TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjkxN2QwYjYyLWVkMTgtNDk0Ni04NWY3LWNkNTBmZjhiMTAzMSJ9.eyJpYXQiOjE3NDkyMTg1OTAsImV4cCI6MTc4MDc1NDU5MCwic3ViIjoiMTUyNjA4NjAzNjg4MTQwOTAyNSJ9.igEi53ojUkV95-45axj70lEtatyO-rxnBfysmBXFwxc';
 
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const response = await axios.get(`${BASE_URL}/api/tasks`);
+        const response = await axios.get(`${BASE_URL}/api/tasks`, {
+          headers: {
+            Authorization: `Bearer ${TOKEN}`,
+          },
+        });
         setTasks(response.data);
       } catch (error) {
         console.error('Ошибка при загрузке задач:', error);
