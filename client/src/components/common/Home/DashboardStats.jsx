@@ -2,7 +2,7 @@ import React, { useMemo, useEffect, useState } from 'react';
 import axios from 'axios';
 import styles from './DashboardStats.module.scss';
 
-import { getAccessToken } from '../../../path/to/auth/helpers';
+import { getAccessToken } from '../../../utils/access-token-storage';
 
 import userApi from '../../../api/users';
 
