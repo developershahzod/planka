@@ -3,12 +3,13 @@ import axios from 'axios';
 import styles from './DashboardStats.module.scss';
 import { getAccessToken } from '../../../utils/access-token-storage';
 import userApi from '../../../api/users';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 const DashboardStats = () => {
   const [tasks, setTasks] = useState([]);
   const [tasksall, setTasksall] = useState([]);
   const [loading, setLoading] = useState(true);
-
   const [searchName, setSearchName] = useState('');
   const [searchProject, setSearchProject] = useState('');
   const [searchAssignee, setSearchAssignee] = useState('');
@@ -21,14 +22,10 @@ const DashboardStats = () => {
       try {
         const token = getAccessToken();
         const user = await userApi.getCurrentUser(false, { Authorization: `Bearer ${token}` });
-
         const response = await axios.get(`${BASE_URL}/api/tasks/show`, {
           params: { userId: user.item.id },
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
-
         setTasks(response.data);
       } catch (error) {
         console.log('Ошибка при загрузке задач:', error);
@@ -37,18 +34,14 @@ const DashboardStats = () => {
       }
     };
 
-    const fetchTasks2 = async () => {
+    const fetchTasksAll = async () => {
       try {
         const token = getAccessToken();
-        const user = await userApi.getCurrentUser(false, { Authorization: `Bearer ${token}` });
-
+        await userApi.getCurrentUser(false, { Authorization: `Bearer ${token}` });
         const response = await axios.get(`${BASE_URL}/api/tasks/show`, {
           params: { userId: undefined },
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
-
         setTasksall(response.data);
       } catch (error) {
         console.log('Ошибка при загрузке всех задач:', error);
@@ -58,26 +51,19 @@ const DashboardStats = () => {
     };
 
     fetchTasks();
-    fetchTasks2();
+    fetchTasksAll();
   }, []);
 
   const taskStats = useMemo(() => {
-    let completed = 0;
-    let inProgress = 0;
-    let overdue = 0;
+    let completed = 0, inProgress = 0, overdue = 0;
     const now = Date.now();
-
     tasks.forEach((task) => {
-      if (task.isCompleted) {
-        completed++;
-      } else {
+      if (task.isCompleted) completed++;
+      else {
         inProgress++;
-        if (task.dueDate && new Date(task.dueDate).getTime() < now) {
-          overdue++;
-        }
+        if (task.dueDate && new Date(task.dueDate).getTime() < now) overdue++;
       }
     });
-
     return [
       { name: 'Завершено', value: completed, color: '#4caf50' },
       { name: 'В процессе', value: inProgress, color: '#ff9800' },
@@ -88,17 +74,11 @@ const DashboardStats = () => {
   const activityData = useMemo(() => {
     const days = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
     const map = new Array(7).fill(0);
-
     tasks.forEach((task) => {
-      const date = new Date(task.createdAt);
-      const day = date.getDay();
+      const day = new Date(task.createdAt).getDay();
       map[day]++;
     });
-
-    return map.map((count, i) => ({
-      day: days[i],
-      tasks: count,
-    }));
+    return map.map((count, i) => ({ day: days[i], tasks: count }));
   }, [tasks]);
 
   const filteredTasks = tasksall.filter((task) => {
@@ -107,15 +87,9 @@ const DashboardStats = () => {
     const assigneeMatch = task.assigneeUsername?.toLowerCase().includes(searchAssignee.toLowerCase());
     const now = Date.now();
     let statusMatch = true;
-
-    if (filterStatus === 'completed') {
-      statusMatch = task.isCompleted;
-    } else if (filterStatus === 'inProgress') {
-      statusMatch = !task.isCompleted && (!task.dueDate || new Date(task.dueDate).getTime() >= now);
-    } else if (filterStatus === 'overdue') {
-      statusMatch = !task.isCompleted && task.dueDate && new Date(task.dueDate).getTime() < now;
-    }
-
+    if (filterStatus === 'completed') statusMatch = task.isCompleted;
+    else if (filterStatus === 'inProgress') statusMatch = !task.isCompleted && (!task.dueDate || new Date(task.dueDate).getTime() >= now);
+    else if (filterStatus === 'overdue') statusMatch = !task.isCompleted && task.dueDate && new Date(task.dueDate).getTime() < now;
     return nameMatch && projectMatch && assigneeMatch && statusMatch;
   });
 
@@ -126,6 +100,28 @@ const DashboardStats = () => {
       year: 'numeric',
     });
 
+  const exportToExcel = () => {
+    const dataToExport = filteredTasks.map((task, index) => ({
+      '№': index + 1,
+      'ФИО': task.assigneeUsername,
+      'Название': task.name,
+      'Проект': task.projectName,
+      'Доска': task.boardName,
+      'Статус': task.isCompleted
+        ? 'Завершено'
+        : task.dueDate && new Date(task.dueDate).getTime() < Date.now()
+        ? 'Просрочено'
+        : 'В процессе',
+      'Дата': formatDate(task.createdAt),
+    }));
+    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Задачи');
+    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    const file = new Blob([excelBuffer], { type: 'application/octet-stream' });
+    saveAs(file, 'Задачи.xlsx');
+  };
+
   if (loading) return <div>Загрузка задач...</div>;
 
   return (
@@ -135,14 +131,7 @@ const DashboardStats = () => {
           <h2 className={styles.sectionTitle}>{item.name}</h2>
           <div className={styles.statRow}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <div
-                style={{
-                  width: 10,
-                  height: 10,
-                  backgroundColor: item.color,
-                  borderRadius: '50%',
-                }}
-              />
+              <div style={{ width: 10, height: 10, backgroundColor: item.color, borderRadius: '50%' }} />
               <span>{item.name}</span>
             </div>
             <strong>{item.value}</strong>
@@ -159,13 +148,7 @@ const DashboardStats = () => {
               <span>{item.tasks} задач</span>
             </div>
             <div className={styles.progressBarBackground}>
-              <div
-                className={styles.activityBar}
-                style={{
-                  width: `${item.tasks * 10}%`,
-                  backgroundColor: '#2196f3',
-                }}
-              />
+              <div className={styles.activityBar} style={{ width: `${item.tasks * 10}%`, backgroundColor: '#2196f3' }} />
             </div>
           </div>
         ))}
@@ -210,60 +193,43 @@ const DashboardStats = () => {
       </div>
 
       <div className={`${styles.card} ${styles.tableBlock}`} style={{ width: '100%', gridColumn: 'span 3' }}>
-        <h2 className={styles.sectionTitle}>Все задачи (количество: {filteredTasks.length})</h2>
+        <h2 className={styles.sectionTitle}>Все задачи, количество: {filteredTasks.length}</h2>
 
         <div style={{ display: 'flex', gap: '1rem', marginBottom: 16 }}>
           <input
-style={{
-    background: '#1d1f23',
-    border: '1px solid #000000',
-    padding: '10px',
-    borderRadius: '5px',
-    color: 'white',
-  }}
             type="text"
             placeholder="Поиск по названию..."
             value={searchName}
             onChange={(e) => setSearchName(e.target.value)}
+            style={{ background: '#1d1f23', border: '1px solid #000000', padding: '10px', borderRadius: '5px', color: 'white' }}
           />
           <input
-style={{
-    background: '#1d1f23',
-    border: '1px solid #000000',
-    padding: '10px',
-    borderRadius: '5px',
-    color: 'white',
-  }}
             type="text"
             placeholder="Поиск по проекту..."
             value={searchProject}
             onChange={(e) => setSearchProject(e.target.value)}
+            style={{ background: '#1d1f23', border: '1px solid #000000', padding: '10px', borderRadius: '5px', color: 'white' }}
           />
           <input
-style={{
-    background: '#1d1f23',
-    border: '1px solid #000000',
-    padding: '10px',
-    borderRadius: '5px',
-    color: 'white',
-  }}
             type="text"
             placeholder="Поиск по исполнителю..."
             value={searchAssignee}
             onChange={(e) => setSearchAssignee(e.target.value)}
+            style={{ background: '#1d1f23', border: '1px solid #000000', padding: '10px', borderRadius: '5px', color: 'white' }}
           />
-          <select style={{
-    background: '#1d1f23',
-    border: '1px solid #000000',
-    padding: '10px',
-    borderRadius: '5px',
-    color: 'white',
-  }} value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
+          <select
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value)}
+            style={{ background: '#1d1f23', border: '1px solid #000000', padding: '10px', borderRadius: '5px', color: 'white' }}
+          >
             <option value="">Все статусы</option>
             <option value="completed">Завершено</option>
             <option value="inProgress">В процессе</option>
             <option value="overdue">Просрочено</option>
           </select>
+          <button onClick={exportToExcel} style={{ backgroundColor: '#4caf50', color: 'white', padding: '10px 20px', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
+            📥 Экспорт в Excel
+          </button>
         </div>
 
         <div className={styles.tableContainer}>
