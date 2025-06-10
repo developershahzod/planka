@@ -1,9 +1,11 @@
 module.exports = {
   friendlyName: 'Show tasks by user',
-  description: 'Returns tasks assigned to user with project, board, and assignee info',
+  description: 'Returns tasks assigned to the current user with project, board, and assignee info',
 
   exits: {
-    success: { description: 'Tasks retrieved successfully' },
+    success: {
+      description: 'Tasks retrieved successfully',
+    },
   },
 
   fn: async function () {
@@ -13,13 +15,25 @@ module.exports = {
 
     const tasksWithDetails = await Promise.all(
       tasks.map(async (task) => {
-        const taskList = await TaskList.findOne({ id: task.taskListId });
-        const board = taskList && taskList.boardId 
-          ? await Board.findOne({ id: taskList.boardId }) 
-          : null;
-        const project = board && board.projectId
-          ? await Project.findOne({ id: board.projectId })
-          : null;
+        // Получаем taskList
+        let taskList = null;
+        if (task.taskListId) {
+          taskList = await TaskList.findOne({ id: task.taskListId });
+        }
+
+        // Получаем board
+        let board = null;
+        if (taskList && taskList.boardId) {
+          board = await Board.findOne({ id: taskList.boardId });
+        }
+
+        // Получаем project
+        let project = null;
+        if (board && board.projectId) {
+          project = await Project.findOne({ id: board.projectId });
+        }
+
+        // Получаем пользователя
         const assignee = task.assigneeUserId
           ? await User.findOne({ id: task.assigneeUserId })
           : null;
@@ -27,16 +41,16 @@ module.exports = {
         return {
           id: task.id,
           name: task.name,
-          position: task.position,
           isCompleted: task.isCompleted,
           createdAt: task.createdAt,
           updatedAt: task.updatedAt,
-          taskListId: task.taskListId,
-          assigneeUserId: task.assigneeUserId,
+          taskListId: task.taskListId || null,
+          assigneeUserId: task.assigneeUserId || null,
 
-          boardName: board?.name || null,
-          projectName: project?.name || null,
-          assigneeUserName: assignee?.username || null,
+          // ✨ Новые поля
+          boardName: board ? board.name : null,
+          projectName: project ? project.name : null,
+          assigneeUsername: assignee ? assignee.username : null,
         };
       })
     );
