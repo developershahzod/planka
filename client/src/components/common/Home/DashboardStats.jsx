@@ -210,7 +210,7 @@ const DashboardStats = () => {
       </div>
 
       <div className={`${styles.card} ${styles.tableBlock}`} style={{ width: '100%', gridColumn: 'span 3' }}>
-        <h2 className={styles.sectionTitle}>Все задачи, количество: {filteredTasks.length}</h2>
+        <h2 className={styles.sectionTitle}>Все задачи (количество: {filteredTasks.length})</h2>
 
         <div style={{ display: 'flex', gap: '1rem', marginBottom: 16 }}>
           <input
