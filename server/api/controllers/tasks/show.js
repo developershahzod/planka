@@ -15,32 +15,29 @@ module.exports = {
 
     const tasksWithDetails = await Promise.all(
       tasks.map(async (task) => {
-        // Получаем taskList
-        let taskList = null;
-        if (task.taskListId) {
-          taskList = await TaskList.find({ id: task.taskListId });
-        }
+        // 1. TaskList
+        const taskList = task.taskListId
+          ? await TaskList.findOne({ id: task.taskListId })
+          : null;
 
-        let cardList = null;
-        if (task.taskListId) {
-          cardList = await Card.find({ id: taskList.cardId });
-        }
+        // 2. Card
+        const card = taskList && taskList.cardId
+          ? await Card.findOne({ id: taskList.cardId })
+          : null;
 
-        // Получаем board
-        let board = null;
-        if (taskList && taskList.boardId) {
-          board = await Board.find({ id: cardList.boardId });
-        }
+        // 3. Board
+        const board = card && card.boardId
+          ? await Board.findOne({ id: card.boardId })
+          : null;
 
-        // Получаем project
-        let project = null;
-        if (board && board.projectId) {
-          project = await Project.find({ id: board.projectId });
-        }
+        // 4. Project
+        const project = board && board.projectId
+          ? await Project.findOne({ id: board.projectId })
+          : null;
 
-        // Получаем пользователя
+        // 5. Assignee user
         const assignee = task.assigneeUserId
-          ? await UserAccount.find({ id: task.assigneeUserId })
+          ? await User.findOne({ id: task.assigneeUserId })
           : null;
 
         return {
@@ -52,7 +49,7 @@ module.exports = {
           taskListId: task.taskListId || null,
           assigneeUserId: task.assigneeUserId || null,
 
-          // ✨ Новые поля
+          // ✨ Добавленные данные
           boardName: board ? board.name : null,
           projectName: project ? project.name : null,
           assigneeUsername: assignee ? assignee.username : null,
