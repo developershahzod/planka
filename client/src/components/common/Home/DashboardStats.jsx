@@ -1,16 +1,17 @@
 import React, { useMemo, useEffect, useState } from 'react';
 import axios from 'axios';
 import styles from './DashboardStats.module.scss';
-
 import { getAccessToken } from '../../../utils/access-token-storage';
 import userApi from '../../../api/users';
 
 const DashboardStats = () => {
   const [tasks, setTasks] = useState([]);
-
   const [tasksall, setTasksall] = useState([]);
-
   const [loading, setLoading] = useState(true);
+
+  const [searchName, setSearchName] = useState('');
+  const [searchProject, setSearchProject] = useState('');
+  const [filterStatus, setFilterStatus] = useState('');
 
   const BASE_URL = 'https://planka-production-f920.up.railway.app';
 
@@ -18,11 +19,7 @@ const DashboardStats = () => {
     const fetchTasks = async () => {
       try {
         const token = getAccessToken();
-        console.log('🔥 TOKEN:', token);
-        const user = await userApi.getCurrentUser(false, {Authorization: `Bearer ${token}`});
-
-        console.log('🔍 userId:', user.item.id);
-        console.log('🧍 Пользователь:', JSON.stringify(user.item.id, null, 2));
+        const user = await userApi.getCurrentUser(false, { Authorization: `Bearer ${token}` });
 
         const response = await axios.get(`${BASE_URL}/api/tasks/show`, {
           params: { userId: user.item.id },
@@ -42,23 +39,17 @@ const DashboardStats = () => {
     const fetchTasks2 = async () => {
       try {
         const token = getAccessToken();
-        console.log('🔥 TOKEN:', token);
-        const user = await userApi.getCurrentUser(false, {Authorization: `Bearer ${token}`});
+        const user = await userApi.getCurrentUser(false, { Authorization: `Bearer ${token}` });
 
-        console.log('🔍 userId:', user.item.id);
-        console.log('🧍 Пользователь:', JSON.stringify(user.item.id, null, 2));
-
-  
         const response = await axios.get(`${BASE_URL}/api/tasks/show`, {
-          params: { userId: undefined  },
+          params: { userId: undefined },
           headers: {
-            Authorization: `Bearer ${token}`,
-          },
+            Authorization: `Bearer ${token}` },
         });
 
         setTasksall(response.data);
       } catch (error) {
-        console.log('Ошибка при загрузке задач:', error);
+        console.log('Ошибка при загрузке всех задач:', error);
       } finally {
         setLoading(false);
       }
@@ -108,6 +99,23 @@ const DashboardStats = () => {
     }));
   }, [tasks]);
 
+  const filteredTasks = tasksall.filter((task) => {
+    const nameMatch = task.name.toLowerCase().includes(searchName.toLowerCase());
+    const projectMatch = task.projectName?.toLowerCase().includes(searchProject.toLowerCase());
+    const now = Date.now();
+    let statusMatch = true;
+
+    if (filterStatus === 'completed') {
+      statusMatch = task.isCompleted;
+    } else if (filterStatus === 'inProgress') {
+      statusMatch = !task.isCompleted && (!task.dueDate || new Date(task.dueDate).getTime() >= now);
+    } else if (filterStatus === 'overdue') {
+      statusMatch = !task.isCompleted && task.dueDate && new Date(task.dueDate).getTime() < now;
+    }
+
+    return nameMatch && projectMatch && statusMatch;
+  });
+
   const formatDate = (dateStr) =>
     new Date(dateStr).toLocaleDateString('ru-RU', {
       day: '2-digit',
@@ -119,6 +127,7 @@ const DashboardStats = () => {
 
   return (
     <div className={styles.gridWrapper}>
+      {/* Статистика */}
       {taskStats.map((item) => (
         <div key={item.name} className={styles.card}>
           <h2 className={styles.sectionTitle}>{item.name}</h2>
@@ -139,6 +148,7 @@ const DashboardStats = () => {
         </div>
       ))}
 
+      {/* Активность */}
       <div className={`${styles.card} ${styles.activityBlock}`}>
         <h2 className={styles.sectionTitle}>Активность по дням</h2>
         {activityData.map((item) => (
@@ -160,6 +170,7 @@ const DashboardStats = () => {
         ))}
       </div>
 
+      {/* Таблица пользователя */}
       <div className={`${styles.card} ${styles.tableBlock}`}>
         <h2 className={styles.sectionTitle}>Список задач</h2>
         <div className={styles.tableContainer}>
@@ -168,7 +179,7 @@ const DashboardStats = () => {
               <tr>
                 <th>№</th>
                 <th>Название</th>
-  <th>Проект</th>
+                <th>Проект</th>
                 <th>Доска</th>
                 <th>Статус</th>
                 <th>Дата</th>
@@ -179,9 +190,8 @@ const DashboardStats = () => {
                 <tr key={task.id}>
                   <td>{index + 1}</td>
                   <td>{task.name}</td>
-   <td>{task.projectName}</td>
+                  <td>{task.projectName}</td>
                   <td>{task.boardName}</td>
-        
                   <td>
                     {task.isCompleted ? (
                       <span className={styles.statusCompleted}>Завершено</span>
@@ -198,9 +208,32 @@ const DashboardStats = () => {
           </table>
         </div>
       </div>
-     <div className={`${styles.card} ${styles.tableBlock}`} style={{ width: '100%', gridColumn: 'span 3' }}>
 
-        <h2 className={styles.sectionTitle}>Все задачи,  количество: {tasksall.length}</h2>
+      {/* Таблица всех задач с фильтрами */}
+      <div className={`${styles.card} ${styles.tableBlock}`} style={{ width: '100%', gridColumn: 'span 3' }}>
+        <h2 className={styles.sectionTitle}>Все задачи, количество: {filteredTasks.length}</h2>
+
+        <div style={{ display: 'flex', gap: '1rem', marginBottom: 16 }}>
+          <input
+            type="text"
+            placeholder="Поиск по названию..."
+            value={searchName}
+            onChange={(e) => setSearchName(e.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="Поиск по проекту..."
+            value={searchProject}
+            onChange={(e) => setSearchProject(e.target.value)}
+          />
+          <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
+            <option value="">Все статусы</option>
+            <option value="completed">Завершено</option>
+            <option value="inProgress">В процессе</option>
+            <option value="overdue">Просрочено</option>
+          </select>
+        </div>
+
         <div className={styles.tableContainer}>
           <table className={styles.table}>
             <thead>
@@ -215,15 +248,13 @@ const DashboardStats = () => {
               </tr>
             </thead>
             <tbody>
-              {tasksall.map((task, index) => (
+              {filteredTasks.map((task, index) => (
                 <tr key={task.id}>
                   <td>{index + 1}</td>
                   <td>{task.assigneeUsername}</td>
                   <td>{task.name}</td>
                   <td>{task.projectName}</td>
                   <td>{task.boardName}</td>
-        
-
                   <td>
                     {task.isCompleted ? (
                       <span className={styles.statusCompleted}>Завершено</span>
