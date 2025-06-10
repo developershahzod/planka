@@ -108,7 +108,7 @@ const Task = React.memo(({ id, index }) => {
 
   return (
     <Draggable
-      draggableId={task:${id}}
+      draggableId={`task:${id}`}
       index={index}
       isDragDisabled={isEditNameOpened || !isEditable}
     >
