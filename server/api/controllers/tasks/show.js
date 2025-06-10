@@ -21,10 +21,15 @@ module.exports = {
           taskList = await TaskList.find({ id: task.taskListId });
         }
 
+        let cardList = null;
+        if (task.taskListId) {
+          cardList = await Card.find({ id: taskList.cardId });
+        }
+
         // Получаем board
         let board = null;
         if (taskList && taskList.boardId) {
-          board = await Board.find({ id: taskList.boardId });
+          board = await Board.find({ id: cardList.boardId });
         }
 
         // Получаем project
@@ -35,7 +40,7 @@ module.exports = {
 
         // Получаем пользователя
         const assignee = task.assigneeUserId
-          ? await User.find({ id: task.assigneeUserId })
+          ? await UserAccount.find({ id: task.assigneeUserId })
           : null;
 
         return {
