@@ -47,9 +47,9 @@ module.exports = {
       model: 'User',
       columnName: 'assignee_user_id',
     },
-    // creatorUserId: {
-    //   model: 'User',
-    //   columnName: 'creator_user_id',
-    // },
+    creatorUserId: {
+      model: 'User',
+      columnName: 'creator_user_id',
+    },
   },
 };
