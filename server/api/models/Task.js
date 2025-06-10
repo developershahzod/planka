@@ -49,7 +49,6 @@ module.exports = {
     },
     // creatorUserId: {
     //   model: 'User',
-    //   required: true,
     //   columnName: 'creator_user_id',
     // },
   },
