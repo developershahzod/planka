@@ -48,7 +48,7 @@ const Task = React.memo(({ id, index }) => {
 
     return {
       canEdit: isEditor,
-      canToggle: isEditor,
+      canToggle: true,
     };
   }, shallowEqual);
 
