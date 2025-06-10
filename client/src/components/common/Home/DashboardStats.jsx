@@ -168,6 +168,8 @@ const DashboardStats = () => {
               <tr>
                 <th>№</th>
                 <th>Название</th>
+  <th>Проект</th>
+                <th>Доска</th>
                 <th>Статус</th>
                 <th>Дата</th>
               </tr>
@@ -177,6 +179,9 @@ const DashboardStats = () => {
                 <tr key={task.id}>
                   <td>{index + 1}</td>
                   <td>{task.name}</td>
+   <td>{task.projectName}</td>
+                  <td>{task.boardName}</td>
+        
                   <td>
                     {task.isCompleted ? (
                       <span className={styles.statusCompleted}>Завершено</span>
