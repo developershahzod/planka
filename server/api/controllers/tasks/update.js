@@ -79,9 +79,9 @@ module.exports = {
       throw Errors.TASK_NOT_FOUND; // Forbidden
     }
 
-    if (boardMembership.role !== BoardMembership.Roles.EDITOR) {
-      throw Errors.NOT_ENOUGH_RIGHTS;
-    }
+    // if (boardMembership.role !== BoardMembership.Roles.EDITOR) {
+    //   throw Errors.NOT_ENOUGH_RIGHTS;
+    // }
 
     let nextTaskList;
     if (!_.isUndefined(inputs.taskListId)) {
