@@ -28,11 +28,11 @@ export default class extends BaseModel {
       as: 'user',
       relatedName: 'assignedTasks',
     }),
-    // creatorUserId: fk({
-    //   to: 'User',
-    //   as: 'user',
-    //   relatedName: 'creatorTasks',
-    // }),
+    creatorUserId: fk({
+      to: 'User',
+      as: 'user',
+      relatedName: 'creatorTasks',
+    }),
   };
 
   static reducer({ type, payload }, Task) {
@@ -113,7 +113,7 @@ export default class extends BaseModel {
       id,
       taskListId: this.taskListId,
       assigneeUserId: this.assigneeUserId,
-      // creatorUserId: this.creatorUserId,
+      creatorUserId: this.creatorUserId,
       position: this.position,
       name: this.name,
       isCompleted: this.isCompleted,
