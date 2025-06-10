@@ -46,9 +46,16 @@ const Task = React.memo(({ id, index }) => {
     const boardMembership = selectors.selectCurrentUserMembershipForCurrentBoard(state);
     const isEditor = !!boardMembership && boardMembership.role === BoardMembershipRoles.EDITOR;
 
+    const isAssignee = task.assigneeUserId === currentUserId;
+
+  return {
+    canEdit: isAssignee,
+    canToggle: isAssignee,
+  };
+
     return {
       canEdit: isEditor,
-      canToggle: isEditor,
+      canToggle: isEditor || isAssignee,
     };
   }, shallowEqual);
 
@@ -123,7 +130,7 @@ const Task = React.memo(({ id, index }) => {
             <span className={styles.checkboxWrapper}>
               <Checkbox
                 checked={task.isCompleted}
-                disabled={!task.isPersisted || !canToggle}
+                disabled={!task.isPersisted || !canToggle }
                 className={styles.checkbox}
                 onChange={handleToggleChange}
               />
