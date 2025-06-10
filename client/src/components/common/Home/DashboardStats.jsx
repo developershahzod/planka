@@ -11,6 +11,7 @@ const DashboardStats = () => {
 
   const [searchName, setSearchName] = useState('');
   const [searchProject, setSearchProject] = useState('');
+  const [searchAssignee, setSearchAssignee] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
 
   const BASE_URL = 'https://planka-production-f920.up.railway.app';
@@ -44,7 +45,8 @@ const DashboardStats = () => {
         const response = await axios.get(`${BASE_URL}/api/tasks/show`, {
           params: { userId: undefined },
           headers: {
-            Authorization: `Bearer ${token}` },
+            Authorization: `Bearer ${token}`,
+          },
         });
 
         setTasksall(response.data);
@@ -102,6 +104,7 @@ const DashboardStats = () => {
   const filteredTasks = tasksall.filter((task) => {
     const nameMatch = task.name.toLowerCase().includes(searchName.toLowerCase());
     const projectMatch = task.projectName?.toLowerCase().includes(searchProject.toLowerCase());
+    const assigneeMatch = task.assigneeUsername?.toLowerCase().includes(searchAssignee.toLowerCase());
     const now = Date.now();
     let statusMatch = true;
 
@@ -113,7 +116,7 @@ const DashboardStats = () => {
       statusMatch = !task.isCompleted && task.dueDate && new Date(task.dueDate).getTime() < now;
     }
 
-    return nameMatch && projectMatch && statusMatch;
+    return nameMatch && projectMatch && assigneeMatch && statusMatch;
   });
 
   const formatDate = (dateStr) =>
@@ -127,7 +130,6 @@ const DashboardStats = () => {
 
   return (
     <div className={styles.gridWrapper}>
-      {/* Статистика */}
       {taskStats.map((item) => (
         <div key={item.name} className={styles.card}>
           <h2 className={styles.sectionTitle}>{item.name}</h2>
@@ -148,7 +150,6 @@ const DashboardStats = () => {
         </div>
       ))}
 
-      {/* Активность */}
       <div className={`${styles.card} ${styles.activityBlock}`}>
         <h2 className={styles.sectionTitle}>Активность по дням</h2>
         {activityData.map((item) => (
@@ -170,7 +171,6 @@ const DashboardStats = () => {
         ))}
       </div>
 
-      {/* Таблица пользователя */}
       <div className={`${styles.card} ${styles.tableBlock}`}>
         <h2 className={styles.sectionTitle}>Список задач</h2>
         <div className={styles.tableContainer}>
@@ -209,24 +209,56 @@ const DashboardStats = () => {
         </div>
       </div>
 
-      {/* Таблица всех задач с фильтрами */}
       <div className={`${styles.card} ${styles.tableBlock}`} style={{ width: '100%', gridColumn: 'span 3' }}>
         <h2 className={styles.sectionTitle}>Все задачи, количество: {filteredTasks.length}</h2>
 
         <div style={{ display: 'flex', gap: '1rem', marginBottom: 16 }}>
           <input
+style={{
+    background: '#1d1f23',
+    border: '1px solid #000000',
+    padding: '10px',
+    borderRadius: '5px',
+    color: 'white',
+  }}
             type="text"
             placeholder="Поиск по названию..."
             value={searchName}
             onChange={(e) => setSearchName(e.target.value)}
           />
           <input
+style={{
+    background: '#1d1f23',
+    border: '1px solid #000000',
+    padding: '10px',
+    borderRadius: '5px',
+    color: 'white',
+  }}
             type="text"
             placeholder="Поиск по проекту..."
             value={searchProject}
             onChange={(e) => setSearchProject(e.target.value)}
           />
-          <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
+          <input
+style={{
+    background: '#1d1f23',
+    border: '1px solid #000000',
+    padding: '10px',
+    borderRadius: '5px',
+    color: 'white',
+  }}
+            type="text"
+            placeholder="Поиск по исполнителю..."
+            value={searchAssignee}
+            onChange={(e) => setSearchAssignee(e.target.value)}
+          />
+          <select style={{
+    background: '#1d1f23',
+    border: '1px solid #000000',
+    padding: '10px',
+    borderRadius: '5px',
+    color: 'white',
+  }} value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
             <option value="">Все статусы</option>
             <option value="completed">Завершено</option>
             <option value="inProgress">В процессе</option>
