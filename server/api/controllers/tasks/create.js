@@ -64,7 +64,10 @@ module.exports = {
       throw Errors.NOT_ENOUGH_RIGHTS;
     }
 
-    const values = _.pick(inputs, ['position', 'name', 'isCompleted']);
+    const values = {
+        ..._.pick(inputs, ['position', 'name', 'isCompleted']),
+        creatorUserId: currentUser.id, // 👈 Добавляем поле
+      };
 
     const task = await sails.helpers.tasks.createOne.with({
       project,
