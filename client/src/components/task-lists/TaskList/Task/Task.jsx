@@ -50,10 +50,10 @@ const Task = React.memo(({ id, index }) => {
     const currentUserId = selectors.selectCurrentUserId(state);
     const isAssignee = task.assigneeUserId === currentUserId;
 
-    return {
-      canEdit: isEditor,
-      canToggle: isEditor || isAssignee,
-    };
+    const canEdit = isEditor && isAssignee; // 👈 Editor can edit ONLY own tasks
+    const canToggle = isAssignee;          // 👈 Only assignee can toggle
+
+    return { canEdit, canToggle };
   }, shallowEqual);
 
   const dispatch = useDispatch();
