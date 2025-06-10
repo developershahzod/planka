@@ -18,24 +18,24 @@ module.exports = {
         // Получаем taskList
         let taskList = null;
         if (task.taskListId) {
-          taskList = await TaskList.findOne({ id: task.taskListId });
+          taskList = await TaskList.find({ id: task.taskListId });
         }
 
         // Получаем board
         let board = null;
         if (taskList && taskList.boardId) {
-          board = await Board.findOne({ id: taskList.boardId });
+          board = await Board.find({ id: taskList.boardId });
         }
 
         // Получаем project
         let project = null;
         if (board && board.projectId) {
-          project = await Project.findOne({ id: board.projectId });
+          project = await Project.find({ id: board.projectId });
         }
 
         // Получаем пользователя
         const assignee = task.assigneeUserId
-          ? await User.findOne({ id: task.assigneeUserId })
+          ? await User.find({ id: task.assigneeUserId })
           : null;
 
         return {
