@@ -37,10 +37,7 @@ const Task = React.memo(({ id, index }) => {
     const list = selectListById(state, listId);
 
     if (isListArchiveOrTrash(list)) {
-      return {
-        canEdit: false,
-        canToggle: false,
-      };
+      return { canEdit: false, canToggle: false };
     }
 
     const boardMembership = selectors.selectCurrentUserMembershipForCurrentBoard(state);
@@ -48,12 +45,14 @@ const Task = React.memo(({ id, index }) => {
 
     const task = selectTaskById(state, id);
     const currentUserId = selectors.selectCurrentUserId(state);
+
+    const isOwnTask = task.creatorUserId === currentUserId;
     const isAssignee = task.assigneeUserId === currentUserId;
 
-    const canEdit = isEditor && isAssignee; // 👈 Editor can edit ONLY own tasks
-    const canToggle = isAssignee;          // 👈 Only assignee can toggle
-
-    return { canEdit, canToggle };
+    return {
+      canEdit: isEditor && isOwnTask,
+      canToggle: isAssignee,
+    };
   }, shallowEqual);
 
   const dispatch = useDispatch();
