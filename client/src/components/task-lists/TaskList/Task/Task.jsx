@@ -1,8 +1,3 @@
-/*!
- * Copyright (c) 2024 PLANKA Software GmbH
- * Licensed under the Fair Use License: https://github.com/plankanban/planka/blob/master/LICENSE.md
- */
-
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
@@ -16,7 +11,6 @@ import selectors from '../../../../selectors';
 import entryActions from '../../../../entry-actions';
 import { usePopupInClosableContext } from '../../../../hooks';
 import { isListArchiveOrTrash } from '../../../../utils/record-helpers';
-import { BoardMembershipRoles } from '../../../../constants/Enums';
 import { ClosableContext } from '../../../../contexts';
 import EditName from './EditName';
 import SelectAssigneeStep from './SelectAssigneeStep';
@@ -31,6 +25,7 @@ const Task = React.memo(({ id, index }) => {
   const selectListById = useMemo(() => selectors.makeSelectListById(), []);
 
   const task = useSelector((state) => selectTaskById(state, id));
+  const currentUserId = useSelector(selectors.selectCurrentUserId);
 
   const { canEdit, canToggle } = useSelector((state) => {
     const { listId } = selectors.selectCurrentCard(state);
@@ -43,19 +38,12 @@ const Task = React.memo(({ id, index }) => {
       };
     }
 
-    const boardMembership = selectors.selectCurrentUserMembershipForCurrentBoard(state);
-    const isEditor = !!boardMembership && boardMembership.role === BoardMembershipRoles.EDITOR;
-
-
-
-  return {
-    canEdit: isAssignee,
-    canToggle: isAssignee,
-  };
+    const task = selectTaskById(state, id);
+    const isOwnTask = task.assigneeUserId === currentUserId;
 
     return {
-      canEdit: isEditor,
-      canToggle: isEditor,
+      canEdit: isOwnTask,
+      canToggle: isOwnTask,
     };
   }, shallowEqual);
 
@@ -64,31 +52,33 @@ const Task = React.memo(({ id, index }) => {
   const [, , setIsClosableActive] = useContext(ClosableContext);
 
   const handleToggleChange = useCallback(() => {
+    if (!canToggle) return;
     dispatch(
       entryActions.updateTask(id, {
         isCompleted: !task.isCompleted,
       }),
     );
-  }, [id, task.isCompleted, dispatch]);
+  }, [id, task.isCompleted, dispatch, canToggle]);
 
-  const handleUserSelect = useCallback(
-    (userId) => {
+  const handleUserSelect = useCallback(() => {
+    if (!task.assigneeUserId) {
       dispatch(
         entryActions.updateTask(id, {
-          assigneeUserId: userId,
+          assigneeUserId: currentUserId,
         }),
       );
-    },
-    [id, dispatch],
-  );
+    }
+  }, [id, dispatch, task.assigneeUserId, currentUserId]);
 
   const handleUserDeselect = useCallback(() => {
-    dispatch(
-      entryActions.updateTask(id, {
-        assigneeUserId: null,
-      }),
-    );
-  }, [id, dispatch]);
+    if (task.assigneeUserId === currentUserId) {
+      dispatch(
+        entryActions.updateTask(id, {
+          assigneeUserId: null,
+        }),
+      );
+    }
+  }, [id, dispatch, task.assigneeUserId, currentUserId]);
 
   const isEditable = task.isPersisted && canEdit;
 
@@ -122,15 +112,15 @@ const Task = React.memo(({ id, index }) => {
       {({ innerRef, draggableProps, dragHandleProps }, { isDragging }) => {
         const contentNode = (
           <div
-            {...draggableProps} // eslint-disable-line react/jsx-props-no-spreading
-            {...dragHandleProps} // eslint-disable-line react/jsx-props-no-spreading
+            {...draggableProps}
+            {...dragHandleProps}
             ref={innerRef}
             className={classNames(styles.wrapper, isDragging && styles.wrapperDragging)}
           >
             <span className={styles.checkboxWrapper}>
               <Checkbox
                 checked={task.isCompleted}
-                disabled={!task.isPersisted}
+                disabled={!task.isPersisted || !canToggle}
                 className={styles.checkbox}
                 onChange={handleToggleChange}
               />
@@ -139,8 +129,6 @@ const Task = React.memo(({ id, index }) => {
               <EditName taskId={id} onClose={handleEditNameClose} />
             ) : (
               <div className={classNames(canEdit && styles.contentHoverable)}>
-                {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events,
-                                             jsx-a11y/no-static-element-interactions */}
                 <span
                   className={classNames(styles.text, canEdit && styles.textEditable)}
                   onClick={handleClick}
@@ -151,42 +139,49 @@ const Task = React.memo(({ id, index }) => {
                     <Linkify linkStopPropagation>{task.name}</Linkify>
                   </span>
                 </span>
-                {(task.assigneeUserId || isEditable) && (
-                  <div className={classNames(styles.actions, isEditable && styles.actionsEditable)}>
-                    {isEditable ? (
-                      <>
-                        <SelectAssigneePopup
-                          currentUserId={task.assigneeUserId}
-                          onUserSelect={handleUserSelect}
-                          onUserDeselect={handleUserDeselect}
-                        >
-                          {task.assigneeUserId ? (
-                            <UserAvatar
-                              id={task.assigneeUserId}
-                              size="tiny"
-                              className={styles.assigneeUserAvatar}
-                            />
-                          ) : (
-                            <Button className={styles.button}>
-                              <Icon fitted name="add user" size="small" />
-                            </Button>
-                          )}
-                        </SelectAssigneePopup>
-                        <ActionsPopup taskId={id} onNameEdit={handleNameEdit}>
-                          <Button className={styles.button}>
-                            <Icon fitted name="pencil" size="small" />
-                          </Button>
-                        </ActionsPopup>
-                      </>
-                    ) : (
+
+                {/* Показывать кнопки только если задача свободна или принадлежит текущему пользователю */}
+                {(task.assigneeUserId === currentUserId || !task.assigneeUserId) && (
+                  <div
+                    className={classNames(styles.actions, isEditable && styles.actionsEditable)}
+                  >
+                    <SelectAssigneePopup
+                      currentUserId={task.assigneeUserId}
+                      onUserSelect={handleUserSelect}
+                      onUserDeselect={handleUserDeselect}
+                    >
+                      {task.assigneeUserId ? (
+                        <UserAvatar
+                          id={task.assigneeUserId}
+                          size="tiny"
+                          className={styles.assigneeUserAvatar}
+                        />
+                      ) : (
+                        <Button className={styles.button}>
+                          <Icon fitted name="add user" size="small" />
+                        </Button>
+                      )}
+                    </SelectAssigneePopup>
+                    <ActionsPopup taskId={id} onNameEdit={handleNameEdit}>
+                      <Button className={styles.button}>
+                        <Icon fitted name="pencil" size="small" />
+                      </Button>
+                    </ActionsPopup>
+                  </div>
+                )}
+
+                {/* Отображение аватарки без кнопок — если назначен кто-то другой */}
+                {task.assigneeUserId &&
+                  task.assigneeUserId !== currentUserId &&
+                  !isEditable && (
+                    <div className={styles.actions}>
                       <UserAvatar
                         id={task.assigneeUserId}
                         size="tiny"
                         className={styles.assigneeUserAvatar}
                       />
-                    )}
-                  </div>
-                )}
+                    </div>
+                  )}
               </div>
             )}
           </div>
