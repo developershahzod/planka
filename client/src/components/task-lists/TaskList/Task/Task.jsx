@@ -130,7 +130,7 @@ const Task = React.memo(({ id, index }) => {
             <span className={styles.checkboxWrapper}>
               <Checkbox
                 checked={task.isCompleted}
-                disabled={!task.isPersisted || task.assigneeUserId }
+                disabled={!task.isPersisted}
                 className={styles.checkbox}
                 onChange={handleToggleChange}
               />
