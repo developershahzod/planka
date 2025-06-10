@@ -71,6 +71,7 @@ module.exports = {
       ...values,
       position,
       taskListId: values.taskList.id,
+      creatorUserId: values.creatorUserId,
     });
 
     sails.sockets.broadcast(
